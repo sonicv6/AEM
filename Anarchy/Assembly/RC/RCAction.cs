@@ -1,6 +1,7 @@
 ﻿using ExitGames.Client.Photon;
 using RC;
 using System;
+using Anarchy.UI;
 
 public class RCAction
 {
@@ -99,7 +100,7 @@ public class RCAction
                                 this.callException("Variable not found: " + key);
                                 return;
                             }
-                            RCManager.intVariables[key] = (int)Math.Pow((double)((int)RCManager.intVariables[key]), (double)num2);
+                            RCManager.intVariables[key] = (int)Math.Pow(((int)RCManager.intVariables[key]), num2);
                             return;
 
                         case 7:
@@ -126,44 +127,26 @@ public class RCAction
             case 2:
                 {
                     string str2 = this.parameters[0].returnString(null);
-                    bool flag2 = this.parameters[1].returnBool(null);
-                    int num3 = this.actionType;
-                    if (num3 != 0)
+                    switch (this.actionType)
                     {
-                        if (num3 != 11)
-                        {
-                            if (num3 != 12)
-                            {
-                                return;
-                            }
+                        case 0:
+                            bool flag2 = this.parameters[1].returnBool(null);
+                            RCManager.boolVariables[str2] = flag2;
+                            return;
+                        case 11:
                             if (!RCManager.boolVariables.ContainsKey(str2))
                             {
-                                RCManager.boolVariables.Add(str2, Convert.ToBoolean(UnityEngine.Random.Range(0, 2)));
+                                this.callException("No Variable");
                                 return;
                             }
+
+                            RCManager.boolVariables[str2] = !((bool) RCManager.boolVariables[str2]);
+                            return;
+                        case 12:
                             RCManager.boolVariables[str2] = Convert.ToBoolean(UnityEngine.Random.Range(0, 2));
                             return;
-                        }
-                        else
-                        {
-                            if (!RCManager.boolVariables.ContainsKey(str2))
-                            {
-                                this.callException("Variable not found: " + str2);
-                                return;
-                            }
-                            RCManager.boolVariables[str2] = !(bool)RCManager.boolVariables[str2];
+                        default:
                             return;
-                        }
-                    }
-                    else
-                    {
-                        if (!RCManager.boolVariables.ContainsKey(str2))
-                        {
-                            RCManager.boolVariables.Add(str2, flag2);
-                            return;
-                        }
-                        RCManager.boolVariables[str2] = flag2;
-                        return;
                     }
                 }
             case 3:
@@ -201,6 +184,17 @@ public class RCAction
                                     return;
                                 }
                             case 9:
+                                if (!RCManager.stringVariables.ContainsKey(str3))
+                                {
+                                    this.callException("No Variable");
+                                    return;
+                                }
+
+                                RCManager.stringVariables[str3] =
+                                    ((string) RCManager.stringVariables[str3]).Replace(parameters[1].returnString(null),
+                                        string.Empty);
+                                return;
+                            case 10:
                                 this.parameters[1].returnString(null);
                                 if (!RCManager.stringVariables.ContainsKey(str3))
                                 {
@@ -229,10 +223,11 @@ public class RCAction
             case 4:
                 {
                     string str7 = this.parameters[0].returnString(null);
-                    float num5 = this.parameters[1].returnFloat(null);
+                    float num5;
                     switch (this.actionType)
                     {
                         case 0:
+                            num5 = this.parameters[1].returnFloat(null);
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
                                 RCManager.floatVariables.Add(str7, num5);
@@ -242,6 +237,7 @@ public class RCAction
                             return;
 
                         case 1:
+                            num5 = this.parameters[1].returnFloat(null);
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
                                 this.callException("No Variable");
@@ -251,6 +247,7 @@ public class RCAction
                             return;
 
                         case 2:
+                            num5 = this.parameters[1].returnFloat(null);
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
                                 this.callException("No Variable");
@@ -260,6 +257,7 @@ public class RCAction
                             return;
 
                         case 3:
+                            num5 = this.parameters[1].returnFloat(null);
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
                                 this.callException("No Variable");
@@ -269,6 +267,7 @@ public class RCAction
                             return;
 
                         case 4:
+                            num5 = this.parameters[1].returnFloat(null);
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
                                 this.callException("No Variable");
@@ -278,6 +277,7 @@ public class RCAction
                             return;
 
                         case 5:
+                            num5 = this.parameters[1].returnFloat(null);
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
                                 this.callException("No Variable");
@@ -287,34 +287,78 @@ public class RCAction
                             return;
 
                         case 6:
+                            num5 = this.parameters[1].returnFloat(null);
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
                                 this.callException("No Variable");
                                 return;
                             }
-                            RCManager.floatVariables[str7] = (float)Math.Pow((double)((int)RCManager.floatVariables[str7]), (double)num5);
+                            RCManager.floatVariables[str7] = (float)Math.Pow((float)RCManager.floatVariables[str7], num5);
                             return;
 
                         case 7:
-                        case 8:
-                        case 9:
-                        case 10:
-                        case 11:
-                            break;
+                            if (!RCManager.floatVariables.ContainsKey(str7))
+                            {
+                                this.callException("No Variable");
+                                return;
+                            }
 
+                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Sin((float) RCManager.floatVariables[str7] * (Math.PI / 180)), 9);
+                            return;
+                        case 8:
+                            if (!RCManager.floatVariables.ContainsKey(str7))
+                            {
+                                this.callException("No Variable");
+                                return;
+                            }
+
+                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Cos((float) RCManager.floatVariables[str7] * (Math.PI / 180)), 9);
+                            return;
+                        case 9:
+                            if (!RCManager.floatVariables.ContainsKey(str7))
+                            {
+                                this.callException("No Variable");
+                                return;
+                            }
+
+                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Tan((float) RCManager.floatVariables[str7] * (Math.PI / 180)), 9);
+                            return;
+                        case 10:
+                            if (!RCManager.floatVariables.ContainsKey(str7))
+                            {
+                                this.callException("No Variable");
+                                return;
+                            }
+
+                            RCManager.floatVariables[str7] = (float)Math.Round(180 / Math.PI * Math.Asin((float) RCManager.floatVariables[str7]), 9);
+                            return;
+                        case 11:
+                            if (!RCManager.floatVariables.ContainsKey(str7))
+                            {
+                                this.callException("No Variable");
+                                return;
+                            }
+
+                            RCManager.floatVariables[str7] = (float)Math.Round(180 / Math.PI * Math.Acos((float) RCManager.floatVariables[str7]), 9);
+                            return;
                         case 12:
                             if (!RCManager.floatVariables.ContainsKey(str7))
                             {
-                                RCManager.floatVariables.Add(str7, UnityEngine.Random.Range(num5, this.parameters[2].returnFloat(null)));
+                                this.callException("No Variable");
                                 return;
                             }
+
+                            RCManager.floatVariables[str7] = (float)Math.Round(180 / Math.PI* Math.Atan((float) RCManager.floatVariables[str7]), 9);
+                            return;
+
+                        case 13:
+                            num5 = this.parameters[1].returnFloat(null);
                             RCManager.floatVariables[str7] = UnityEngine.Random.Range(num5, this.parameters[2].returnFloat(null));
                             return;
 
                         default:
                             return;
                     }
-                    break;
                 }
             case 5:
                 {
@@ -328,7 +372,6 @@ public class RCAction
                             return;
                         }
                         RCManager.playerVariables[str8] = player;
-                        return;
                     }
                     break;
                 }
@@ -503,7 +546,7 @@ public class RCAction
                             targetPlayer.SetCustomProperties(new Hashtable
                 {
                     {
-                        "RCteam",
+                        "customFloat",
                         this.parameters[1].returnFloat(null)
                     }
                 });
@@ -575,11 +618,31 @@ public class RCAction
                 switch (this.actionType)
                 {
                     case 0:
+                        if (this.parameters[0].returnString(null).StartsWith("EM/Commands//"))
+                        {
+                            var command = this.parameters[0].returnString(null).Substring(12).Replace("[-]", " ");
+                            if (RC.RCManager.RCEvents.ContainsKey("OnChatInput"))
+                            {
+                                string key = (string)RC.RCManager.RCVariableNames["OnChatInput"];
+                                var collection = RC.RCManager.stringVariables;
+                                if (collection.ContainsKey(key))
+                                {
+                                    collection[key] = command;
+                                }
+                                else
+                                {
+                                    collection.Add(key, command);
+                                }
+                                ((RCEvent)RC.RCManager.RCEvents["OnChatInput"]).checkEvent();
+                            }
+                            Chat.CMDHandler.TryHandle(command);
+                            return;
+                        }
                         FengGameManagerMKII.FGM.BasePV.RPC("Chat", PhotonTargets.All, new object[]
                         {
                     this.parameters[0].returnString(null),
                     string.Empty
-                        });
+                       });
                         return;
 
                     case 1:

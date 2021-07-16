@@ -151,6 +151,10 @@ public class RCActionHelper
                                     }
                                     return false;
                                 }
+                            case 18:
+                                return this.nextHelper.returnBool(player.ID);
+
+
                         }
                     }
                     return false;
@@ -558,6 +562,8 @@ public class RCActionHelper
                                     }
                                     return 0;
                                 }
+                            case 18:
+                                return player.ID;
                         }
                     }
                     return 0;
@@ -783,6 +789,8 @@ public class RCActionHelper
                                     }
                                     return string.Empty;
                                 }
+                            case 18:
+                                return player.ID.ToString();
                         }
                     }
                     return string.Empty;

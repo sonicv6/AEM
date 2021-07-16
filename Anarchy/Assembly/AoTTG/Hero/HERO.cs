@@ -12,7 +12,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using Anarchy.UI;
 using UnityEngine;
 using Xft;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -106,8 +109,12 @@ public partial class HERO : HeroBase
     private float flare1CD;
     private float flare2CD;
     private float flare3CD;
+    private float flare4CD;
+    private float flare5CD;
+    private float flare6CD;
+    private float flare7CD;
     private readonly float flareTotalCD = 30f;
-    private readonly float gravity = 20f;
+    private float gravity = 20f;
     private bool grounded;
     private GameObject gunDummy;
     public bool Gunner;
@@ -208,8 +215,9 @@ public partial class HERO : HeroBase
 
     public bool IsDead { get; private set; }
 
-    public bool IsGrabbed => State == HeroState.Grab;
+    public float CurrentGas => currentGas;
 
+    public bool IsGrabbed => State == HeroState.Grab;
     internal SmoothSyncMovement SmoothSync
     {
         get
@@ -236,6 +244,21 @@ public partial class HERO : HeroBase
         }
     }
 
+    public void AddGas(float gas)
+    {
+        if (currentGas + gas <= totalGas)
+        {
+            this.currentGas += gas;
+        }
+        else this.currentGas = totalGas;
+        ShowGas();
+    }
+    public void ConsumeGas(float gas)
+    {
+        if (gas <= currentGas) currentGas -= gas;
+        else currentGas = 0;
+        ShowGas();
+    }
     private static void ApplyForceToBody(GameObject go, Vector3 v)
     {
         go.rigidbody.AddForce(v);
@@ -273,8 +296,20 @@ public partial class HERO : HeroBase
                 GetComponent<CapsuleCollider>().isTrigger = false;
             }
         }
+
+        this.gravity = FengGameManagerMKII.FGM.HeroGrav;
     }
 
+    private void OnCollisionEnter()
+    {
+        if (FengGameManagerMKII.FGM.ImpactDeathEnabled && currentSpeed > FengGameManagerMKII.FGM.ImpactDeathSpeed)
+        {
+            this.MarkDie();
+            BasePV.RPC("netDie", PhotonTargets.All,
+                (baseR.velocity) * 15, false,
+                BasePV.viewID, "HV Impact", true);
+        }
+    }
     private void BodyLean()
     {
         if (IsLocal)
@@ -576,6 +611,38 @@ public partial class HERO : HeroBase
             if (flare3CD < 0f)
             {
                 flare3CD = 0f;
+            }
+        }
+        if (flare4CD > 0f)
+        {
+            flare4CD -= Time.deltaTime;
+            if (flare4CD < 0f)
+            {
+                flare4CD = 0f;
+            }
+        }
+        if (flare5CD > 0f)
+        {
+            flare5CD -= Time.deltaTime;
+            if (flare5CD < 0f)
+            {
+                flare5CD = 0f;
+            }
+        }
+        if (flare6CD > 0f)
+        {
+            flare6CD -= Time.deltaTime;
+            if (flare6CD < 0f)
+            {
+                flare6CD = 0f;
+            }
+        }
+        if (flare7CD > 0f)
+        {
+            flare7CD -= Time.deltaTime;
+            if (flare7CD < 0f)
+            {
+                flare7CD = 0f;
             }
         }
     }
@@ -2624,6 +2691,7 @@ public partial class HERO : HeroBase
             IN_GAME_MAIN_CAMERA.GameType == GameType.MultiPlayer && BasePV.IsMine)
         {
             myHorse = Pool.NetworkEnable("horse", baseT.position + Vectors.up * 5f, baseT.rotation);
+            if (Settings.Interpolation) myHorse.rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
             myHorse.GetComponent<Horse>().Owner = this;
             myHorse.GetComponent<TITAN_CONTROLLER>().isHorse = true;
         }
@@ -3396,7 +3464,6 @@ public partial class HERO : HeroBase
     }
 
     private bool _cancelGasDisable = false;
-
     public void Launch(Vector3 des, bool left = true, bool leviMode = false)
     {
         if (isMounted)
@@ -3813,6 +3880,7 @@ public partial class HERO : HeroBase
 
     public void ShootFlare(int type)
     {
+        Quaternion rot = Camera.main.transform.rotation;
         var flag = false;
         if (type == 1 && flare1CD == 0f)
         {
@@ -3838,16 +3906,53 @@ public partial class HERO : HeroBase
             {
                 var go =
                     Pool.Enable("FX/flareBullet" + type, baseT.position,
-                        baseT.rotation); //(GameObject)UnityEngine.Object.Instantiate(CacheResources.Load("FX/flareBullet" + type), baseT.position, baseT.rotation);
+                        Quaternion.Euler(rot.eulerAngles.x + 60, rot.eulerAngles.y, rot.eulerAngles.z)); //(GameObject)UnityEngine.Object.Instantiate(CacheResources.Load("FX/flareBullet" + type), baseT.position, baseT.rotation);
                 go.GetComponent<FlareMovement>().dontShowHint();
                 //UnityEngine.Object.Destroy(gameObject, 25f);
                 go.GetComponent<SelfDestroy>().CountDown = 25f;
             }
             else
             {
-                var gameObject2 = Pool.NetworkEnable("FX/flareBullet" + type, baseT.position, baseT.rotation);
+                var gameObject2 = Pool.NetworkEnable("FX/flareBullet" + type, baseT.position, Quaternion.Euler(rot.eulerAngles.x + 60, rot.eulerAngles.y, rot.eulerAngles.z));
                 gameObject2.GetComponent<FlareMovement>().dontShowHint();
             }
+        }
+
+        Color c;
+        switch (type)
+        {
+            case 4:
+                if (flare4CD == 0f)
+                {
+                    c = User.FlareColour4.Value.HexToColor();
+                    FengGameManagerMKII.FGM.BasePV.RPC("FlareColour", PhotonTargets.All, baseT.position, Quaternion.Euler(rot.eulerAngles.x + 60, rot.eulerAngles.y, rot.eulerAngles.z), c.r, c.g, c.b);
+                    flare4CD = flareTotalCD;
+                }
+                break;
+            case 5:
+                if (flare5CD == 0f)
+                {
+                    c = User.FlareColour5.Value.HexToColor();
+                    FengGameManagerMKII.FGM.BasePV.RPC("FlareColour", PhotonTargets.All, baseT.position, Quaternion.Euler(rot.eulerAngles.x + 60, rot.eulerAngles.y, rot.eulerAngles.z), c.r, c.g, c.b);
+                    flare5CD = flareTotalCD;
+                }
+                break;
+            case 6:
+                if (flare6CD == 0f)
+                {
+                    c = User.FlareColour6.Value.HexToColor();
+                    FengGameManagerMKII.FGM.BasePV.RPC("FlareColour", PhotonTargets.All, baseT.position, Quaternion.Euler(rot.eulerAngles.x + 60, rot.eulerAngles.y, rot.eulerAngles.z), c.r, c.g, c.b);
+                    flare6CD = flareTotalCD;
+                }
+                break;
+            case 7:
+                if (flare7CD == 0f)
+                {
+                    c = User.FlareColour7.Value.HexToColor();
+                    FengGameManagerMKII.FGM.BasePV.RPC("FlareColour", PhotonTargets.All, baseT.position, Quaternion.Euler(rot.eulerAngles.x + 60, rot.eulerAngles.y, rot.eulerAngles.z), c.r, c.g, c.b);
+                    flare7CD = flareTotalCD;
+                }
+                break;
         }
     }
 
@@ -4082,6 +4187,50 @@ public partial class HERO : HeroBase
                 if (InputManager.IsInputDown[InputCode.Flare3])
                 {
                     ShootFlare(3);
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.Flare4))
+                {
+                    ShootFlare(4);
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.Flare5))
+                {
+                    ShootFlare(5);
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.Flare6))
+                {
+                    ShootFlare(6);
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.Flare7))
+                {
+                    ShootFlare(7);
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.DropWagon))
+                {
+                    DropWagon();
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.HorseFollow))
+                {
+                    myHorse.GetComponent<Horse>().FollowOverride = !myHorse.GetComponent<Horse>().FollowOverride;
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.ConnectWagon))
+                {
+                    TryConnectWagon();
+                }
+
+                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.GetOnHorse) && Vector3.Distance(baseT.position, myHorse.transform.position) <= 10f)
+                {
+                    //baseT.position = myHorse.transform.position + Vectors.up * 1.65f;
+                    //baseT.rotation = myHorse.transform.rotation;
+                    //isMounted = true;
+                    //CrossFade("horse_idle", 0.1f);
+                    //myHorse.GetComponent<Horse>().Mounted();
                 }
 
                 if (InputManager.IsInputDown[InputCode.Restart])
@@ -5236,6 +5385,29 @@ public partial class HERO : HeroBase
                                      (currentSpeed + 0.1f);
                 }
             }
+        }
+    }
+
+    public void CreateWagon(bool refill, string fileName)
+    {
+        if (!myHorse.GetComponent<Horse>().Wagon)
+        {
+            var id = myHorse.GetPhotonView().viewID;
+            FengGameManagerMKII.FGM.BasePV.RPC("SpawnWagon", PhotonTargets.AllBuffered, id, refill, fileName);
+        }
+    }
+
+    public void DropWagon()
+    {
+        var id = myHorse.GetPhotonView().viewID;
+        FengGameManagerMKII.FGM.BasePV.RPC("DisconnectWagon", PhotonTargets.AllBuffered, myHorse.GetPhotonView().viewID, myHorse.GetComponent<Horse>().wag.transform.position, myHorse.GetComponent<Horse>().wag.transform.rotation);
+    }
+
+    public void TryConnectWagon()
+    {
+        if (Vector3.Distance(baseT.position, myHorse.GetComponent<Horse>().wag.transform.position) <= 25f)
+        {
+            FengGameManagerMKII.FGM.BasePV.RPC("ReconnectWagon", PhotonTargets.AllBuffered, myHorse.GetPhotonView().viewID);
         }
     }
 

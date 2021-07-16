@@ -28,6 +28,7 @@ public static class PhotonPlayerProperty
     public static readonly string hairInfo = "hairInfo";
     public static readonly string heroCostumeId = "heroCostumeId";
     public static readonly string isTitan = "isTitan";
+    public static readonly string wagoneer = "wagoneer";
     public static readonly string kills = "kills";
     public static readonly string max_dmg = "max_dmg";
     public static readonly string name = "name";

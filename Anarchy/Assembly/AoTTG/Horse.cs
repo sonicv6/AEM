@@ -20,8 +20,15 @@ public class Horse : Photon.MonoBehaviour
     public HERO Owner;
     public GameObject myHero;
     public HorseState State = HorseState.Idle;
+    public bool Wagon;
+    public GameObject wag;
+    public bool FollowOverride;
     private float _idleTime = 0f;
 
+    public void SetSpeed(float s)
+    {
+        this.speed = s;
+    }
     private void Awake()
     {
         baseA = GetComponent<Animation>();
@@ -70,7 +77,7 @@ public class Horse : Photon.MonoBehaviour
         return 0f;
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if (Owner == null && BasePV.IsMine)
         {
@@ -234,7 +241,7 @@ public class Horse : Photon.MonoBehaviour
                     if (this.timeElapsed > 0.6f)
                     {
                         this.timeElapsed = 0f;
-                        if (Vector3.Distance(this.Owner.baseT.position, this.setPoint) > 20f)
+                        if (Vector3.Distance(this.Owner.baseT.position, this.setPoint) > 20f && (!this.Wagon || this.FollowOverride))
                         {
                             this.Followed();
                         }
@@ -262,7 +269,7 @@ public class Horse : Photon.MonoBehaviour
             case HorseState.Idle:
                 {
                     this.ToIdleAnimation();
-                    if (this.Owner != null && Vector3.Distance(this.Owner.baseT.position, baseT.position) > 20f)
+                    if (this.Owner != null && Vector3.Distance(this.Owner.baseT.position, baseT.position) > 20f && (!this.Wagon || this.FollowOverride))
                     {
                         this.Followed();
                     }

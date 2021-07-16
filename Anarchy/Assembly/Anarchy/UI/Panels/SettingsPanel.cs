@@ -222,6 +222,22 @@ namespace Anarchy.UI
                         LabelCenter(rects[1], locale["lblAbuse"], true);
                         ToggleButton(rects[1], Settings.BodyLeanEnabled, locale["bodylean"], true);
                         ToggleButton(rects[1], Settings.InfiniteGasPvp, locale["infGasPvp"], true);
+                        
+
+                        //EM Overrides
+                        rects[0].MoveY();
+                        LabelCenter(rects[0], "Unity Map Overrides:", true);
+                        ToggleButton(rects[0], Settings.BaseMapDistanceOverride, "BaseMapDistance Override:", true);
+                        TextField(rects[0], Settings.BaseMapDistance, "BaseMapDistance:", Style.BigLabelOffset, true);
+                        rects[0].MoveY();
+                        ToggleButton(rects[0], Settings.DetailObjectDistanceOverride, "DetailObjectDistance Override:", true);
+                        TextField(rects[0], Settings.DetailObjectDistance, "DetailObjectDistance:", Style.BigLabelOffset, true);
+                        rects[0].MoveY();
+                        ToggleButton(rects[0], Settings.TreeDistanceOverride, "TreeDistance Override:", true);
+                        TextField(rects[0], Settings.TreeDistance, "TreeDistance:", Style.BigLabelOffset, true);
+                        rects[0].MoveY();
+                        ToggleButton(rects[0], Settings.TreeBillboardDistanceOverride, "TreeBillboardDistance Override:", true);
+                        TextField(rects[0], Settings.TreeBillboardDistance, "TreeBillboardDistance:", Style.BigLabelOffset, true);
                     }
                     break;
 
@@ -446,6 +462,13 @@ namespace Anarchy.UI
                     {
                         RebindButton(rects[0], InputManager.AllKeys[i]);
                     }
+                    rects[0].MoveY();
+                    Label(rects[0], "[00FF00]Expedition Binds".ToHTMLFormat());
+                    rects[0].MoveY();
+                    for (int i = 0; i < (int) EMInputManager.EMInputs.Count; i++)
+                    {
+                        RebindButton(rects[0], EMInputManager.Keys[i]);
+                    }
                     break;
 
                 case RebindsHuman:
@@ -519,15 +542,26 @@ namespace Anarchy.UI
             pageSelection = SelectionGrid(rect, pageSelection, pagesSelection, pagesSelection.Length, true);
         }
 
+        private string[] GetResolutions()
+        {
+            string[] resolutions = new string[Screen.resolutions.Length];
+            for (int count = 0; count < resolutions.Length; count++)
+            {
+                resolutions[count] = $"{Screen.resolutions[count].width}x{Screen.resolutions[count].height}";
+            }
+
+            return resolutions;
+        }
         [GUIPage(Video)]
         private void DrawVideoPage()
         {
             //left
             left.Reset();
             LabelCenter(left, locale["graphics"], true);
-            HorizontalSlider(left, VideoSettings.DrawDistance, locale.Format("drawDistance", VideoSettings.DrawDistance.Value.ToString("F0")), 1000f, 10000f, Style.LabelOffsetSlider, true);
+            TextField(left, VideoSettings.DrawDistance, locale["drawDistance"], Style.BigLabelOffset, true);
             ToggleButton(left, VideoSettings.Mipmap, locale["mipmap"], true);
             ToggleButton(left, VideoSettings.VSync, locale["vsync"], true);
+            TextField(left, VideoSettings.MaxFPS, "Max FPS:", Style.BigLabelOffset, true);
 
             DropdownMenu(this, left, VideoSettings.TextureQuality, locale.GetArray("texturesLevels"), locale["texturesQuality"], left.width - Style.LabelOffset, true);
 
@@ -555,8 +589,7 @@ namespace Anarchy.UI
             //left.MoveOffsetX(Style.LabelOffset);
             //SelectionGrid(left, VideoSettings.BlendWeight, locale.GetArray("blendWeights"), 3, true);
             //left.ResetX();
-            HorizontalSlider(left, VideoSettings.LODBias, locale.Format("lodBias", VideoSettings.LODBias.Value.ToString("F2")), 0f, 2f, Style.LabelOffsetSlider, true);
-            HorizontalSlider(left, VideoSettings.MaxLODLevel, locale.Format("maxLOD", VideoSettings.MaxLODLevel.Value.ToString("F0")), 0f, 7f, Style.LabelOffsetSlider, true);
+            HorizontalSlider(left, VideoSettings.LODBias, locale.Format("lodBias", VideoSettings.LODBias.Value.ToString("F2")), 2f, 8f, Style.LabelOffsetSlider, true);
 
             //right
             right.Reset();
@@ -567,6 +600,7 @@ namespace Anarchy.UI
 
             DropdownMenu(this, right, VideoSettings.ShadowCascades, locale.GetArray("shadowCascades"), locale["shadowCascade"], right.width - Style.LabelOffset, true);
             DropdownMenu(this, right, VideoSettings.ShadowProjection, locale.GetArray("shadowProjections"), locale["shadowProjection"], right.width - Style.LabelOffset, true);
+            ToggleButton(right, Settings.Interpolation, "Interpolation", true);
             //Label(right, locale["shadowCascade"], false);
             //right.MoveOffsetX(Style.LabelOffset);
             //SelectionGrid(right, VideoSettings.ShadowCascades, locale.GetArray("shadowCascades"), 3, true);

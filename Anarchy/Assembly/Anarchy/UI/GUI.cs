@@ -651,7 +651,6 @@ namespace Anarchy.UI
                 position.MoveY();
             }
         }
-
         #endregion ToggleButton
     }
 }

@@ -22,6 +22,10 @@ public partial class TITAN : TitanBase
 
     public static float minusDistance = 99999f;
     public static GameObject minusDistanceEnemy;
+    public float CustomSpeed;
+    public float CustomAttackWait;
+    public static float commonVD;
+    public float aniSpeed = 1f;
     private const float Gravity = 120f;
     private const float MaxStamina = 320f;
     private HashSet<string> _ignoreLookTargetAnimations;
@@ -396,6 +400,7 @@ public partial class TITAN : TitanBase
 
     private void Awake()
     {
+        if (commonVD != 0) chaseDistance = commonVD;
         base.Cache();
         baseR.freezeRotation = true;
         baseR.useGravity = false;
@@ -821,7 +826,7 @@ public partial class TITAN : TitanBase
                 hitPause -= Time.deltaTime;
                 if (hitPause <= 0f)
                 {
-                    baseA[hitAnimation].speed = 1f;
+                    baseA[hitAnimation].speed = 1f * aniSpeed;
                     hitPause = 0f;
                 }
             }
@@ -1808,7 +1813,7 @@ public partial class TITAN : TitanBase
         foreach (var obj in baseA)
         {
             var animationState = (AnimationState)obj;
-            animationState.speed = num2;
+            animationState.speed = num2 * aniSpeed;
         }
 
         baseR.mass *= myLevel;
@@ -1824,7 +1829,7 @@ public partial class TITAN : TitanBase
             foreach (var obj2 in baseA)
             {
                 var animationState2 = (AnimationState)obj2;
-                animationState2.speed = num2 * 1.05f;
+                animationState2.speed = num2 * 1.05f * aniSpeed;
             }
 
             if (nonAI)
@@ -1844,7 +1849,7 @@ public partial class TITAN : TitanBase
             foreach (var obj3 in baseA)
             {
                 var animationState3 = (AnimationState)obj3;
-                animationState3.speed = num2 * 1.05f;
+                animationState3.speed = num2 * 1.05f * aniSpeed;
             }
 
             if (nonAI)
@@ -1916,29 +1921,28 @@ public partial class TITAN : TitanBase
         runAnimation = "run_walk";
         grabTF = new GameObject { name = "titansTmpGrabTF" };
         oldHeadRotation = Head.rotation;
-        if (IN_GAME_MAIN_CAMERA.GameType == GameType.MultiPlayer && !BasePV.IsMine)
+        if (IN_GAME_MAIN_CAMERA.GameType != GameType.MultiPlayer || BasePV.IsMine)
         {
-            return;
-        }
 
-        if (!hasSetLevel)
-        {
-            myLevel = Random.Range(0.7f, 3f);
-            if (GameModes.SizeMode.Enabled)
+
+            if (!hasSetLevel)
             {
-                myLevel = Random.Range(GameModes.SizeMode.GetFloat(0), GameModes.SizeMode.GetFloat(1));
+                myLevel = Random.Range(0.7f, 3f);
+                if (GameModes.SizeMode.Enabled)
+                {
+                    myLevel = Random.Range(GameModes.SizeMode.GetFloat(0), GameModes.SizeMode.GetFloat(1));
+                }
+
+                hasSetLevel = true;
             }
 
-            hasSetLevel = true;
-        }
-
-        spawnPt = baseT.position;
-        SetMyLevel();
-        spawned = true;
-        SetAbnormalType(abnormalType);
-        if (myHero == null)
-        {
-            FindNearestHero();
+            spawnPt = baseT.position;
+            SetMyLevel();
+            SetAbnormalType(abnormalType);
+            if (myHero == null)
+            {
+                FindNearestHero();
+            }
         }
 
         if (maxHealth == 0 && GameModes.HealthMode.Enabled)
@@ -1972,6 +1976,7 @@ public partial class TITAN : TitanBase
         ColliderEnabled = true;
         IsHooked = false;
         IsLook = false;
+        spawned = true;
     }
 
     private void Turn(float d)
@@ -2634,7 +2639,6 @@ public partial class TITAN : TitanBase
                 FootAudio.Play();
             }
         }
-
         UpdateCollider();
         UpdateLabel();
         HeadMovement();
@@ -2915,7 +2919,7 @@ public partial class TITAN : TitanBase
                     hitPause -= dt;
                     if (hitPause <= 0f)
                     {
-                        baseA[hitAnimation].speed = 1f;
+                        baseA[hitAnimation].speed = 1f * aniSpeed;
                         hitPause = 0f;
                     }
                 }
@@ -3113,16 +3117,12 @@ public partial class TITAN : TitanBase
                             return;
                         }
 
-                        if (myDistance < chaseDistance)
+                        if (myDistance <= chaseDistance)
                         {
                             var position = myHeroT.position;
                             switch (abnormalType)
                             {
-                                case AbnormalType.Jumper when (myDistance > attackDistance ||
-                                                               position.y > Head.position.y + 4f * myLevel) &&
-                                                              Mathf.Abs(between2) < 120f &&
-                                                              (baseT.position - position).sqrMagnitude <
-                                                              Mathf.Pow(1.5f * position.y, 2f):
+                                case AbnormalType.Jumper when ((this.myDistance > this.attackDistance) || (this.myHero.transform.position.y > (this.Head.position.y + (4f * this.myLevel)))) && ((Mathf.Abs(this.between2) < 120f) && (Vector3.Distance(this.baseT.position, this.myHero.transform.position) < (1.5f * (this.myHero.transform.position.y - this.baseT.position.y + myLevel)))):
                                     Attack("jumper_0");
                                     return;
 
@@ -3805,11 +3805,9 @@ public partial class TITAN : TitanBase
                     }
                     else
                     {
-                        if (abnormalType == AbnormalType.Jumper &&
-                            (myDistance > attackDistance &&
-                             myHeroT.position.y > Head.position.y + 4f * myLevel ||
-                             myHeroT.position.y > Head.position.y + 4f * myLevel) &&
-                             (baseT.position - myHeroT.position).sqrMagnitude < Mathf.Pow(1.5f * myHeroT.position.y, 2f))
+                        if (((this.abnormalType == AbnormalType.Jumper) && (((this.myDistance > this.attackDistance) && (this.myHero.transform.position.y > (this.Head.position.y + (4f * this.myLevel)))) 
+                            || (this.myHero.transform.position.y > (this.Head.position.y + (4f * this.myLevel)))))
+                            && (Vector3.Distance(this.baseT.position, this.myHero.transform.position) < (1.5f * (this.myHero.transform.position.y - this.baseT.position.y + myLevel))))
                         {
                             Attack("jumper_0");
                             return;

@@ -46,8 +46,6 @@ namespace Anarchy.UI
                 int height = Convert.ToInt32(res[1]);
                 Screen.SetResolution(width, height, file.GetBool("fullscreen"));
                 profile = file.GetString("profile");
-                int fps = file.GetInt("fps");
-                Application.targetFrameRate = fps >= 30 ? fps : -1;
                 QualitySettings.SetQualityLevel(file.GetInt("graphics"), true);
                 Localization.Language.SetLanguage(file.GetString("language"));
 

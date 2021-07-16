@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq.Expressions;
+using UnityEngine;
 
 namespace Anarchy.Configuration
 {
@@ -25,14 +26,17 @@ namespace Anarchy.Configuration
         public static IntSetting ShadowCascades = new IntSetting("ShadowCascades", 2);
         public static IntSetting ShadowProjection = new IntSetting("ShadowProjection", 0);
         public static IntSetting TextureQuality = new IntSetting("TextureQuality", 1);
-        public static FloatSetting TrailFPS = new FloatSetting("BladeTrailFPS", 60f);
         public static IntSetting TrailType = new IntSetting("BladeTrailType", 1);
+        public static IntSetting MaxFPS = new IntSetting("MaxFPS", 0);
 
-        public static FloatSetting LODBias = new FloatSetting("LODBias", 0f);
-        public static FloatSetting MaxLODLevel = new FloatSetting("MaxLODLevel", 1f);
+        public static FloatSetting LODBias = new FloatSetting("LODBias", 2f);
+        public static FloatSetting MaxLODLevel = new FloatSetting("MaxLODLevel", 0f);
         public static FloatSetting DrawDistance = new FloatSetting("DrawDistance", 1000f);
         public static FloatSetting ShadowDistance = new FloatSetting("ShadowDistance", 100f);
         public static FloatSetting Quality = new FloatSetting("Quality", 0f);
+        public static FloatSetting TrailFPS = new FloatSetting("BladeTrailFPS", 60f);
+
+        public static bool MCFogOverride;
 
         public static void Apply()
         {
@@ -88,14 +92,15 @@ namespace Anarchy.Configuration
                 QualitySettings.shadowProjection = UnityEngine.ShadowProjection.CloseFit;
             }
 
-            if (FengGameManagerMKII.Level != null && FengGameManagerMKII.Level.HasFog)
+            if (FengGameManagerMKII.Level != null && FengGameManagerMKII.Level.HasFog && !MCFogOverride)
             {
                 RenderSettings.fog = !DisableFog.Value;
             }
-            else
+            else if (!MCFogOverride)
             {
                 RenderSettings.fog = false;
             }
+            Application.targetFrameRate = (MaxFPS <= 30) ? -1 : MaxFPS;
             Settings.Apply();
         }
     }

@@ -33,6 +33,8 @@ namespace RC
         public static ExitGames.Client.Photon.Hashtable RCRegions = new ExitGames.Client.Photon.Hashtable();
         public static ExitGames.Client.Photon.Hashtable RCRegionTriggers = new ExitGames.Client.Photon.Hashtable();
         public static ExitGames.Client.Photon.Hashtable RCVariableNames = new ExitGames.Client.Photon.Hashtable();
+        public static byte[] b = File.ReadAllBytes(Path.Combine(Application.dataPath, @"Resources\EMAssets2.unity3d"));
+        public static AssetBundle a = AssetBundle.CreateFromMemoryImmediate(b);
 
         //Also changable variable. Use it to change titans amount on a custom map
         public static Anarchy.Configuration.IntSetting SpawnCapCustom = new Anarchy.Configuration.IntSetting("titanSpawnCap", 1);
