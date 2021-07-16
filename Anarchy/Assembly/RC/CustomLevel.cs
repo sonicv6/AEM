@@ -1810,7 +1810,7 @@ namespace RC
                         RCActionHelper helper = returnHelper(strArray3[0]);
                         RCActionHelper helper2 = returnHelper(strArray3[1]);
                         RCActionHelper helper3 = returnHelper(strArray3[2]);
-                        RCAction action = new RCAction(num11, 12, null, new RCActionHelper[]
+                        RCAction action = new RCAction(num11, 13, null, new RCActionHelper[]
                         {
                         helper,
                         helper2,
@@ -1892,6 +1892,60 @@ namespace RC
                         {
                         helper,
                         helper2
+                        });
+                        sentTrueActions.Add(action);
+                    }
+                    else if (str2.StartsWith("Sin"))
+                    {
+                        RCActionHelper helper = returnHelper(strArray3[0]);
+                        RCAction action = new RCAction(num11, 7, null, new RCActionHelper[]
+                        {
+                            helper
+                        });
+                        sentTrueActions.Add(action);
+                    }
+                    else if (str2.StartsWith("Cos"))
+                    {
+                        RCActionHelper helper = returnHelper(strArray3[0]);
+                        RCAction action = new RCAction(num11, 8, null, new RCActionHelper[]
+                        {
+                            helper
+                        });
+                        sentTrueActions.Add(action);
+                    }
+                    else if (str2.StartsWith("Tan"))
+                    {
+                        RCActionHelper helper = returnHelper(strArray3[0]);
+                        RCAction action = new RCAction(num11, 9, null, new RCActionHelper[]
+                        {
+                            helper
+                        });
+                        sentTrueActions.Add(action);
+                    }
+                    else if (str2.StartsWith("ArcSin"))
+                    {
+                        RCActionHelper helper = returnHelper(strArray3[0]);
+                        RCAction action = new RCAction(num11, 10, null, new RCActionHelper[]
+                        {
+                            helper
+                        });
+                        sentTrueActions.Add(action);
+                    }
+                    else if (str2.StartsWith("ArcCos"))
+                    {
+                        RCActionHelper helper = returnHelper(strArray3[0]);
+                        RCAction action = new RCAction(num11, 11, null, new RCActionHelper[]
+                        {
+                            helper
+                        });
+                        sentTrueActions.Add(action);
+                    }
+                    else if (str2.StartsWith("ArcTan"))
+                    {
+                        RCActionHelper helper = returnHelper(strArray3[0]);
+                        RCAction action = new RCAction(num11, 12, null, new RCActionHelper[]
+                        {
+                            helper
                         });
                         sentTrueActions.Add(action);
                     }
@@ -2486,6 +2540,12 @@ namespace RC
                                 else if (str2.StartsWith("GetName()"))
                                 {
                                     RCActionHelper helper = new RCActionHelper(2, 12, null);
+                                    list.Add(helper);
+                                    sentType = 2;
+                                }
+                                else if (str2.StartsWith("GetID()"))
+                                {
+                                    RCActionHelper helper = new RCActionHelper(2, 18, null);
                                     list.Add(helper);
                                     sentType = 2;
                                 }

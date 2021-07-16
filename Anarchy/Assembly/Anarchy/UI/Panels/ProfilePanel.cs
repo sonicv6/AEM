@@ -8,6 +8,7 @@ namespace Anarchy.UI
         private const int MainPage = 0;
         private const int AdvancedPage = 1;
         private const int PreviewPage = 2;
+        private const int ExpeditionPage = 3;
         private const int MaxProfiles = 15;
 
         private int checkProfile;
@@ -150,6 +151,30 @@ namespace Anarchy.UI
             return -1;
         }
 
+        [GUIPage(ExpeditionPage)]
+        private void ExpeditionSettings()
+        {
+            right.Reset();
+            LabelCenter(right, "Expedition Settings", true);
+            TextField(right, User.FlareColour4, "Flare 4", Style.LabelOffset, true);
+            TextField(right, User.FlareColour5, "Flare 5", Style.LabelOffset, true);
+            TextField(right, User.FlareColour6, "Flare 6", Style.LabelOffset, true);
+            TextField(right, User.FlareColour7, "Flare 7", Style.LabelOffset, true);
+
+            right.MoveToEndY(WindowPosition, Style.Height * 2f + Style.VerticalMargin);
+            right.BeginHorizontal(2);
+            if (Button(right, locale["btnToMain"], false))
+            {
+                pageSelection = MainPage;
+                return;
+            }
+            right.MoveX();
+            if (Button(right, locale["btnBack"], false))
+            {
+                Disable();
+                return;
+            }
+        }
         [GUIPage(MainPage)]
         private void MainSettings()
         {
@@ -175,7 +200,12 @@ namespace Anarchy.UI
             TextField(right, User.TitanNames[2], locale["jumper"], Style.LabelOffset, true);
             TextField(right, User.TitanNames[3], locale["crawler"], Style.LabelOffset, true);
             TextField(right, User.TitanNames[4], locale["punk"], Style.LabelOffset, true);
-
+            right.MoveToEndY(WindowPosition, Style.Height * 2f + Style.VerticalMargin + 25);
+            if (Button(right, "Expedition", true))
+            {
+                pageSelection = ExpeditionPage;
+                return;
+            }
             right.MoveToEndY(WindowPosition, Style.Height * 2f + Style.VerticalMargin);
             if (Button(right, locale["preview"], true))
             {

@@ -133,6 +133,7 @@ namespace Anarchy.Network.Events
             if (photonViewsInChildren.Length != instIDs.Length)
             {
                 throw new System.Exception("Error in Instantiation! The resource's PhotonView count is not the same as in incoming data.");
+                Debug.Log("Error in Instantiation! The resource's PhotonView count is not the same as in incoming data.");
             }
             for (int i = 0; i < instIDs.Length; i++)
             {

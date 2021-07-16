@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using AoTTG.Anarchy.Commands.Chat;
+using UnityEngine;
 
 namespace Anarchy.Commands.Chat
 {
@@ -43,19 +45,25 @@ namespace Anarchy.Commands.Chat
             allCommands.Add("unmute", new MuteCommand(false));
             allCommands.Add("animate", new AnimateNameCommand());
             allCommands.Add("checkuser", new CheckAnarchyUserCommand());
+            allCommands.Add("givegas", new GiveGasCommand());
+            allCommands.Add("test", new TestCommand());
+            allCommands.Add("sptit", new SPTitCommand());
+            allCommands.Add("emcustommap", new EMCustomMapCommand());
+            allCommands.Add("bundle_load", new BundleLoadCommand());
+            allCommands.Add("object_load", new ObjectLoadCommand());
+            allCommands.Add("object_spawn", new ObjectSpawnCommand());
+            allCommands.Add("commonvd", new CommonVDCommand());
+            allCommands.Add("seths", new SetHSCommand());
+            allCommands.Add("fog", new FogCommand());
+            allCommands.Add("light", new LightCommand());
+            allCommands.Add("gravity", new GravityCommand());
+            allCommands.Add("impact", new ImpactDeathCommand());
+            allCommands.Add("moveobject", new MoveObjectCommand());
+            allCommands.Add("destroyobjects", new DestroyObjectsCommand());
         }
 
         private void NotFound(string name)
         {
-            string message = User.FormatColors(ChatCommand.Lang.Format("cmdNotFound", name));
-            if (AnarchyManager.Log.IsActive)
-            {
-                UI.Log.AddLineRaw(message, UI.MsgType.Error);
-            }
-            else
-            {
-                UI.Chat.Add(message);
-            }
         }
 
         public void TryHandleCommand(ICommand cmd, string inputLine)

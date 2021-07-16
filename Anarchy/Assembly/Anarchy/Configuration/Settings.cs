@@ -22,10 +22,22 @@ namespace Anarchy.Configuration
         public static BoolSetting RacingTimerOnCrosshair = new BoolSetting("CrosshairRacingTimer", false);
         public static BoolSetting BombTimerOnCrosshair = new BoolSetting("CrosshairBombTimer", false);
 
-        public static BoolSetting BodyLeanEnabled = new BoolSetting("BodyLeanEnabled", true);   
+        public static BoolSetting BodyLeanEnabled = new BoolSetting("BodyLeanEnabled", true);
+
+
+        public static BoolSetting WagonRefill = new BoolSetting("WagonRefill", true);
+        public static BoolSetting BaseMapDistanceOverride = new BoolSetting("BaseMapOverride", false);
+        public static FloatSetting BaseMapDistance = new FloatSetting("BaseMapDistance", 0f);
+        public static BoolSetting DetailObjectDistanceOverride = new BoolSetting("DetailObjectOverride", false);
+        public static FloatSetting DetailObjectDistance = new FloatSetting("DetailObjectDistance", 0f);
+        public static BoolSetting TreeDistanceOverride = new BoolSetting("TreeDistanceOverride", false);
+        public static FloatSetting TreeDistance = new FloatSetting("TreeDistance", 0f);
+        public static BoolSetting TreeBillboardDistanceOverride = new BoolSetting("TreeBillboardOverride", false);
+        public static FloatSetting TreeBillboardDistance = new FloatSetting("TreeBillboardDistance", 0f);
 
         public static BoolSetting InvertY = new BoolSetting("InvertY", false);
         public static BoolSetting Snapshots = new BoolSetting("Snapshots", false);
+        public static BoolSetting Interpolation = new BoolSetting("InterpolateEnabled", true);
         public static BoolSetting SnapshotsInGame = new BoolSetting("SnapshotsInGame", false);
         public static BoolSetting Speedometer = new BoolSetting("Speedometer", false);
         public static BoolSetting Minimap = new BoolSetting("Minimap", false);
@@ -37,7 +49,6 @@ namespace Anarchy.Configuration
         public static FloatSetting CameraDistance = new FloatSetting("CameraDistance", 1f);
         public static FloatSetting MouseSensivity = new FloatSetting("MouseSensivity", 0.5f);
         public static FloatSetting SoundLevel = new FloatSetting("SoundLevel", 1f);
-
         public static void AddSetting(ISetting set)
         {
             lock (locker)

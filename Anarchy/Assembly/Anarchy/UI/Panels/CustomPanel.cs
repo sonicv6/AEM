@@ -1,4 +1,5 @@
-﻿using RC;
+﻿using System.IO;
+using RC;
 using UnityEngine;
 using static Anarchy.UI.GUI;
 
@@ -6,12 +7,17 @@ namespace Anarchy.UI
 {
     public class CustomPanel : GUIPanel
     {
+        private const int CommandsPage = 3;
+        private const int UnityMapPage = 2;
         private const int CustomLogicPage = 1;
         private const int CustomMapsPage = 0;
 
         public static readonly string LogicsPath = Application.dataPath + "/../Logics/";
         public static readonly string MapsPath = Application.dataPath + "/../Maps/";
+        public static readonly string UnityMapPath = Application.dataPath + "/CustomMap/";
+        public static readonly string CommandListsPath = Application.dataPath + "/CommandLists/";
 
+        private string[] wagons = {"No canopy"};
         private string[] allNames;
         private GUIStyle areaStyle;
         private string filter;
@@ -25,6 +31,12 @@ namespace Anarchy.UI
         private Rect scrollArea;
         private Rect scrollAreaView;
         private SmartRect scrollRect;
+        private string selectedMap;
+        private Vector3 pos;
+        private string prefab = string.Empty;
+        private string x = "0";
+        private string y = "0";
+        private string z = "0";
 
         public CustomPanel() : base(nameof(CustomPanel), GUILayers.CustomPanel)
         {
@@ -40,18 +52,24 @@ namespace Anarchy.UI
             rect.width -= offset;
             pageSelection = SelectionGrid(rect, pageSelection, selections, selections.Length, true);
             rect.ResetX();
-
             LabelCenter(right, locale["picker" + pageSelection.ToString()], true);
             right.BeginHorizontal(2);
             if (Button(right, locale["update"], false))
             {
-                if (pageSelection == CustomLogicPage)
+                switch (pageSelection)
                 {
-                    allNames = LoadFiles(LogicsPath);
-                }
-                else
-                {
-                    allNames = LoadFiles(MapsPath);
+                    case CustomMapsPage:
+                        allNames = LoadFiles(MapsPath);
+                        break;
+                    case CustomLogicPage:
+                        allNames = LoadFiles(LogicsPath);
+                        break;
+                    case UnityMapPage:
+                        allNames = LoadFiles(UnityMapPath);
+                        break;
+                    case CommandsPage:
+                        allNames = LoadFiles(CommandListsPath);
+                        break;
                 }
             }
             right.MoveX();
@@ -140,6 +158,27 @@ namespace Anarchy.UI
                 files[i] = name;
             }
             return files;
+        }
+
+        [GUIPage(CommandsPage)]
+        private void CommandListsPage()
+        {
+        }
+
+        [GUIPage(UnityMapPage)]
+        private void UnityPage()
+        {
+            prefab = TextField(left, prefab, "Prefab", Style.LabelOffset, true);
+            Label(left, "Position", true);
+            x = TextField(left, x, "X", Style.LabelOffset, true);
+            y = TextField(left, y, "Y", Style.LabelOffset, true);
+            z = TextField(left, z, "Z", Style.LabelOffset, true);
+            Vector3 p = new Vector3(float.Parse(x), float.Parse(y), float.Parse(z));
+
+            if (Button(left, "Spawn Map", true))
+            {
+                FengGameManagerMKII.FGM.BasePV.RPC("EMCustomMapRPC", PhotonTargets.AllBuffered, selectedMap, prefab, p, new Quaternion());
+            }
         }
 
         [GUIPage(CustomLogicPage)]
@@ -244,41 +283,47 @@ namespace Anarchy.UI
 
         private void Pick(int id, string name, bool rnd)
         {
-            if (pageSelection == CustomLogicPage)
+            switch (pageSelection)
             {
-                CustomLevel.currentScriptLogic = Load(id, LogicsPath);
-            }
-            else
-            {
-                CustomLevel.currentScript = Load(id, MapsPath);
-            }
-            if (IN_GAME_MAIN_CAMERA.GameType == GameType.MultiPlayer)
-            {
-                FengGameManagerMKII.FGM.BasePV.RPC("Chat", PhotonTargets.All, new object[] { GetSendString(rnd, name), "" });
+                case CustomLogicPage:
+                    CustomLevel.currentScriptLogic = Load(id, LogicsPath);
+                    break;
+                case CustomMapsPage:
+                    CustomLevel.currentScript = Load(id, MapsPath);
+                    break;
+                case UnityMapPage:
+                    selectedMap = name;
+                    break;
+                case CommandsPage:
+                    FengGameManagerMKII.FGM.StartCoroutine(FengGameManagerMKII.FGM.ExecuteCommandList(Path.Combine(Application.dataPath, "CommandLists/" + name + ".txt")));
+                    break;
             }
         }
 
         private void PickByName(string name, bool rnd)
         {
-            if (pageSelection == CustomLogicPage)
+            switch (pageSelection)
             {
-                CustomLevel.currentScriptLogic = LoadByName(name, LogicsPath);
-                if (CustomLevel.currentScriptLogic == string.Empty)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                CustomLevel.currentScript = LoadByName(name, MapsPath);
-                if (CustomLevel.currentScript == string.Empty)
-                {
-                    return;
-                }
-            }
-            if (IN_GAME_MAIN_CAMERA.GameType == GameType.MultiPlayer)
-            {
-                FengGameManagerMKII.FGM.BasePV.RPC("Chat", PhotonTargets.All, new object[] { GetSendString(rnd, name), "" });
+                case CustomLogicPage:
+                    CustomLevel.currentScriptLogic = LoadByName(name, LogicsPath);
+                    if (CustomLevel.currentScriptLogic == string.Empty)
+                    {
+                        return;
+                    }
+                    break;
+                case CustomMapsPage:
+                    CustomLevel.currentScript = LoadByName(name, MapsPath);
+                    if (CustomLevel.currentScript == string.Empty)
+                    {
+                        return;
+                    }
+                    break;
+                case UnityMapPage:
+                    selectedMap = name;
+                    break;
+                case CommandsPage:
+                    FengGameManagerMKII.FGM.StartCoroutine(FengGameManagerMKII.FGM.ExecuteCommandList(Path.Combine(Application.dataPath, "CommandLists/" + name + ".txt")));
+                    break;
             }
         }
 
@@ -292,7 +337,25 @@ namespace Anarchy.UI
             filterUpdate += Time.unscaledDeltaTime;
             if (filterUpdate >= 1f)
             {
-                string[] loaded = LoadFiles(pageSelection == CustomMapsPage ? MapsPath : LogicsPath);
+                string[] loaded;
+                switch (pageSelection)
+                {
+                    case CustomMapsPage:
+                        loaded = LoadFiles(MapsPath);
+                        break;
+                    case CustomLogicPage:
+                        loaded = LoadFiles(LogicsPath);
+                        break;
+                    case UnityMapPage:
+                        loaded = LoadFiles(UnityMapPath);
+                        break;
+                    case CommandsPage:
+                        loaded = LoadFiles(CommandListsPath);
+                        break;
+                    default:
+                        loaded = new string[1];
+                        break;
+                }
                 if (filter != string.Empty)
                 {
                     var list = new System.Collections.Generic.List<string>();

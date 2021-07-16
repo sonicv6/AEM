@@ -1007,6 +1007,7 @@ internal partial class FengGameManagerMKII : MonoBehaviour
 
             obj2.SetAbnormalType((AbnormalType)type);
         }
+
     }
 
     public void SpawnTitansCustom(int rate, int count, bool punk = false)

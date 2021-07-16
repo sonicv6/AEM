@@ -5,15 +5,6 @@ public class SelfDestroy : Photon.MonoBehaviour
 {
     public float CountDown = 5f;
 
-    private void OnDisable()
-    {
-    }
-
-    private void OnEnable()
-    {
-        CountDown = 5f;
-    }
-
     private void Start()
     {
     }

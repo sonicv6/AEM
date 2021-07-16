@@ -38,14 +38,13 @@ namespace Anarchy.UI
         private List<string> messages;
         private string inputLine = string.Empty;
 
-        internal Commands.Chat.ChatCommandHandler CMDHandler = new Commands.Chat.ChatCommandHandler();
+        public static Commands.Chat.ChatCommandHandler CMDHandler = new Commands.Chat.ChatCommandHandler();
 
         internal Chat() : base("Chat", GUILayers.Chat)
         {
             Instance = this;
             messages = new List<string>();
         }
-
         public static string GetLastMessages()
         {
             int i = Instance.messages.Count - 11;

@@ -4,7 +4,7 @@ namespace Anarchy.UI
 {
     public class PausePanel : GUIBase
     {
-        private const float Height = 385;
+        private const float Height = 480;
         private const float Width = 300;
 
         private GUIBase activePanel;
@@ -52,6 +52,17 @@ namespace Anarchy.UI
                 activePanel = AnarchyManager.ProfilePanel;
                 activePanel.Enable();
             }
+
+            if (PauseButton(pauseRect, "players") && PhotonNetwork.IsMasterClient)
+            {
+                if (activePanel != null)
+                {
+                    activePanel.DisableImmediate();
+                }
+
+                activePanel = new PlayersPanel();
+                activePanel.Enable();
+            }
             if (PauseButton(pauseRect, "skins"))
             {
                 if (activePanel != null)
@@ -72,6 +83,17 @@ namespace Anarchy.UI
                     activePanel = new CustomPanel();
                     activePanel.Enable();
                 }
+            }
+
+            if (PauseButton(pauseRect, "expedition"))
+            {
+                if (activePanel != null)
+                {
+                    activePanel.DisableImmediate();
+                }
+
+                activePanel = new ExpeditionPanel();
+                activePanel.Enable();
             }
             if (PauseButton(pauseRect, "gameSettings"))
             {

@@ -220,7 +220,7 @@ public class PhotonPlayer
         {
             AnarchySync = true;
             HasVoice = true;
-                ModName = string.Format(ModNames.AnarchyCustom, (Anarchy.AnarchyManager.CustomName != string.Empty ? Anarchy.AnarchyManager.CustomName : "Custom"));
+                ModName = "[00FF00]AEM[-]";
         }
         targetArray = new int[] { ID };
         option = new RaiseEventOptions() { TargetActors = targetArray };
@@ -528,6 +528,15 @@ public class PhotonPlayer
             hashtable.Merge(Properties);
             hashtable[byte.MaxValue] = nameField;
             return hashtable;
+        }
+    }
+
+    public bool Wagoneer
+    {
+        get => Properties != null && Properties[PhotonPlayerProperty.wagoneer] is int wag && wag == 2;
+        set
+        {
+            SetCustomProperties(new Hashtable() { { PhotonPlayerProperty.wagoneer, value ? 2 : 1 } });
         }
     }
 

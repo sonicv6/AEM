@@ -15,6 +15,20 @@ using UnityEngine;
 public partial class HERO
 {
     [RPC]
+    private void sethsRPC(float s, PhotonMessageInfo info)
+    {
+        if (info.Sender.IsMasterClient)
+        {
+            myHorse.GetComponent<Horse>().SetSpeed(s);
+        }
+    }
+    [RPC]
+    private void giveGasRPC(float gas, PhotonMessageInfo info)
+    {
+        AddGas(gas);
+        Chat.Add($"{info.Sender.UIName.ToHTMLFormat()}, Gave you {gas} gas");
+    }
+    [RPC]
     private void backToHumanRPC()
     {
         titanForm = false;
@@ -557,7 +571,8 @@ public partial class HERO
     {
         if (info.Sender.IsMasterClient)
         {
-            baseT.position = new Vector3(x, y, z);
+            if (this.isMounted) myHorse.transform.position = new Vector3(x, y, z);
+            else baseT.position = new Vector3(x, y, z);
         }
     }
 

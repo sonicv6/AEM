@@ -5,6 +5,7 @@ using Optimization;
 using Optimization.Caching;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Anarchy.UI;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
@@ -12,6 +13,12 @@ using UnityEngine;
 // ReSharper disable once CheckNamespace
 public partial class TITAN
 {
+
+    [RPC]
+    private void AniSpeed(float speed, PhotonMessageInfo info)
+    {
+        this.aniSpeed = speed;
+    }
     [RPC]
     private void dieBlowRPC(Vector3 attacker, float hitPauseTime)
     {
@@ -161,19 +168,16 @@ public partial class TITAN
         {
             return;
         }
-
         if(Anarchy.Network.Antis.IsValidSkinURL(ref body, 1, info.Sender.ID) == false || Anarchy.Network.Antis.IsValidSkinURL(ref eye, 1, info.Sender.ID) == false)
         {
             return;
         }
-
         if (Skin != null)
         {
             Debug.Log(
                 $"Trying to change TITAN.Skin for viewID {BasePV.viewID} by ID {(info == null ? "-1" : info.Sender.ID.ToString())}");
             return;
         }
-
         //Put antis there
         StartCoroutine(loadskinRPCE(body, eye));
     }
@@ -245,6 +249,10 @@ public partial class TITAN
     [RPC]
     private void netSetAbnormalType(int type)
     {
+        foreach (AnimationState a in baseA)
+        {
+            a.speed = aniSpeed;
+        }
         if (type == 0)
         {
             abnormalType = AbnormalType.Normal;
@@ -297,8 +305,8 @@ public partial class TITAN
                 speed *= 1.6f;
             }
 
-            baseA["turnaround1"].speed = 2f;
-            baseA["turnaround2"].speed = 2f;
+            baseA["turnaround1"].speed = 2f * aniSpeed;
+            baseA["turnaround2"].speed = 2f * aniSpeed;
         }
 
         if (abnormalType == AbnormalType.Crawler)
@@ -323,6 +331,8 @@ public partial class TITAN
             AABB.GetComponent<CapsuleCollider>().height = 10f;
             AABB.GetComponent<CapsuleCollider>().radius = 5f;
             AABB.GetComponent<CapsuleCollider>().center = new Vector3(0f, 5.05f, 0f);
+            if (CustomSpeed != 0) this.speed = CustomSpeed;
+            if (CustomAttackWait != 0) this.attackWait = CustomAttackWait;
         }
 
         if (nonAI)
@@ -336,19 +346,19 @@ public partial class TITAN
                 speed = Mathf.Min(60f, speed);
             }
 
-            baseA["attack_jumper_0"].speed = 7f;
-            baseA["attack_crawler_jump_0"].speed = 4f;
+            baseA["attack_jumper_0"].speed = 7f * aniSpeed;
+            baseA["attack_crawler_jump_0"].speed = 4f * aniSpeed;
         }
 
-        baseA["attack_combo_1"].speed = 1f;
-        baseA["attack_combo_2"].speed = 1f;
-        baseA["attack_combo_3"].speed = 1f;
-        baseA["attack_quick_turn_l"].speed = 1f;
-        baseA["attack_quick_turn_r"].speed = 1f;
-        baseA["attack_anti_AE_l"].speed = 1.1f;
-        baseA["attack_anti_AE_low_l"].speed = 1.1f;
-        baseA["attack_anti_AE_r"].speed = 1.1f;
-        baseA["attack_anti_AE_low_r"].speed = 1.1f;
+        baseA["attack_combo_1"].speed = 1f * aniSpeed;
+        baseA["attack_combo_2"].speed = 1f * aniSpeed;
+        baseA["attack_combo_3"].speed = 1f * aniSpeed;
+        baseA["attack_quick_turn_l"].speed = 1f * aniSpeed;
+        baseA["attack_quick_turn_r"].speed = 1f * aniSpeed;
+        baseA["attack_anti_AE_l"].speed = 1.1f * aniSpeed;
+        baseA["attack_anti_AE_low_l"].speed = 1.1f * aniSpeed;
+        baseA["attack_anti_AE_r"].speed = 1.1f * aniSpeed;
+        baseA["attack_anti_AE_low_r"].speed = 1.1f * aniSpeed;
         Idle();
     }
 

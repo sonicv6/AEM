@@ -27,7 +27,7 @@ namespace Anarchy
         /// <summary>
         /// Your version Custom name
         /// </summary>
-        public static readonly string CustomName = string.Empty;
+        public static readonly string CustomName = "[00FF00]AEM[-]";
         /// <summary>
         /// If you want to use full Anarchy synchronization feautures
         /// </summary>
@@ -41,6 +41,7 @@ namespace Anarchy
         public static ProfilePanel ProfilePanel;
         public static ServerListPanel ServerList;
         public static SettingsPanel SettingsPanel;
+        public static PlayersPanel PlayersPanel;
         public static SinglePanel SinglePanel;
         public static DebugPanel DebugPanel;
         public static CharacterSelectionPanel CharacterSelectionPanel;
@@ -62,6 +63,7 @@ namespace Anarchy
             SinglePanel = new SinglePanel();
             ServerList = new ServerListPanel();
             SettingsPanel = new SettingsPanel();
+            PlayersPanel = new PlayersPanel();
             DebugPanel = new DebugPanel();
             CharacterSelectionPanel = new CharacterSelectionPanel();
             Chat = new Chat();

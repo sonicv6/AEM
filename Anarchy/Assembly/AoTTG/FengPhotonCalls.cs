@@ -527,6 +527,7 @@ internal partial class FengGameManagerMKII
         player.RCteam = 0;
         player.Dead = true;
         player.IsTitan = false;
+        player.Wagoneer = false;
         localRacingResult = string.Empty;
         needChooseSide = true;
         foreach (var info in killInfoList)
@@ -581,6 +582,7 @@ internal partial class FengGameManagerMKII
 
         RespawnPositions.Dispose();
         RCManager.racingSpawnPointSet = false;
+        if (bundleCustomMap != null) bundleCustomMap.Unload(true);
     }
 
     public void OnMasterClientSwitched(AOTEventArgs args)
