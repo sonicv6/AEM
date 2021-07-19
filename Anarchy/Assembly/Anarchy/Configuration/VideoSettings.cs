@@ -1,4 +1,6 @@
 ﻿using System.Linq.Expressions;
+using Anarchy.Network.Discord.SDK;
+using Anarchy.UI;
 using UnityEngine;
 
 namespace Anarchy.Configuration
@@ -19,6 +21,7 @@ namespace Anarchy.Configuration
         public static BoolSetting WindEffect = new BoolSetting("WindEffect", true);
         public static BoolSetting ShadowsUI = new BoolSetting("ShadowsUI", true);
         public static BoolSetting DisableFog = new BoolSetting("DisableFog", false);
+        public static BoolSetting Fullscreen = new BoolSetting("Fullscreen", true);
 
         public static IntSetting AntiAliasing = new IntSetting("AntiAliasing", 0);
         public static IntSetting AnisotropicFiltering = new IntSetting("AnisoLevel", 0);
@@ -28,6 +31,7 @@ namespace Anarchy.Configuration
         public static IntSetting TextureQuality = new IntSetting("TextureQuality", 1);
         public static IntSetting TrailType = new IntSetting("BladeTrailType", 1);
         public static IntSetting MaxFPS = new IntSetting("MaxFPS", 0);
+        public static IntSetting ResolutionIndex = new IntSetting("ResolutionIndex", Screen.resolutions.Length - 1);
 
         public static FloatSetting LODBias = new FloatSetting("LODBias", 2f);
         public static FloatSetting MaxLODLevel = new FloatSetting("MaxLODLevel", 0f);
@@ -76,7 +80,6 @@ namespace Anarchy.Configuration
                     break;
             }
             QualitySettings.antiAliasing = aa;
-            QualitySettings.maximumLODLevel = (int)Mathf.Round(MaxLODLevel.Value);
             QualitySettings.lodBias = LODBias;
             QualitySettings.blendWeights = (BlendWeights)(BlendWeight.Value <= 1 ? (BlendWeight.Value + 1) : 4);
             if (UseShadows.Value)
@@ -102,6 +105,20 @@ namespace Anarchy.Configuration
             }
             Application.targetFrameRate = (MaxFPS <= 30) ? -1 : MaxFPS;
             Settings.Apply();
+        }
+
+        public static string[] Resolutions
+        {
+            get
+            {
+                string[] resolutions = new string[Screen.resolutions.Length];
+                for (int r = 0; r < Screen.resolutions.Length; r++)
+                {
+                    resolutions[r] = $"{Screen.resolutions[r].width}x{Screen.resolutions[r].height}";
+                }
+
+                return resolutions;
+            }
         }
     }
 }

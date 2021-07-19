@@ -18,9 +18,30 @@ internal partial class FengGameManagerMKII
     private GameObject customMap;
     private string bundlePath = Path.Combine(Application.dataPath, @"CustomMap/");
     public float HeroGrav = 20f;
+    public bool MCForceStats;
+    public int MCGAS;
+    public int MCBLA;
+    public int MCSPD;
+    public int MCACL;
     public float ImpactDeathSpeed;
     public bool ImpactDeathEnabled;
 
+
+    [RPC]
+    private void ForceStatsRPC(bool force, int gas, int bla, int spd, int acl)
+    {
+        MCForceStats = force;
+        MCGAS = gas;
+        MCBLA = bla;
+        MCSPD = spd;
+        MCACL = acl;
+
+        var stats = IN_GAME_MAIN_CAMERA.MainHERO.Setup.myCostume.stat;
+        stats.Acl = MCACL;
+        stats.Bla = MCBLA;
+        stats.Spd = MCSPD;
+        stats.Gas = MCGAS;
+    }
     [RPC]
     private void SetImpactDeathRPC(bool enabled, float speed, PhotonMessageInfo info)
     {
@@ -40,6 +61,9 @@ internal partial class FengGameManagerMKII
         {
             case "intensity":
                 CacheGameObject.Find("mainLight").GetComponent<Light>().intensity = float.Parse(value);
+                break;
+            case "color":
+                CacheGameObject.Find("mainLight").GetComponent<Light>().color = value.HexToColor();
                 break;
         }
     }

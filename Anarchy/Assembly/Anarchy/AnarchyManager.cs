@@ -41,7 +41,6 @@ namespace Anarchy
         public static ProfilePanel ProfilePanel;
         public static ServerListPanel ServerList;
         public static SettingsPanel SettingsPanel;
-        public static PlayersPanel PlayersPanel;
         public static SinglePanel SinglePanel;
         public static DebugPanel DebugPanel;
         public static CharacterSelectionPanel CharacterSelectionPanel;
@@ -63,7 +62,6 @@ namespace Anarchy
             SinglePanel = new SinglePanel();
             ServerList = new ServerListPanel();
             SettingsPanel = new SettingsPanel();
-            PlayersPanel = new PlayersPanel();
             DebugPanel = new DebugPanel();
             CharacterSelectionPanel = new CharacterSelectionPanel();
             Chat = new Chat();

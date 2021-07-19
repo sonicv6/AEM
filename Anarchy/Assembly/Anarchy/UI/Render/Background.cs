@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Mono.Security;
+using UnityEngine;
 
 namespace Anarchy.UI
 {
@@ -20,10 +22,17 @@ namespace Anarchy.UI
             style = null;
             AnarchyManager.MainMenu.Disable();
         }
-
+        private string GetAspectRatio()
+        {
+            float val = (float) Screen.width / Screen.height;
+            if (val > 1.3 && val < 1.4) return "Box";
+            if (val > 1.7 && val < 1.8) return "Wide";
+            if (val > 2.3) return "Ultrawide";
+            return "Wide";
+        }
         protected override void OnEnable()
         {
-            string[] allImages = System.IO.Directory.GetFiles(Directory);
+            string[] allImages = System.IO.Directory.GetFiles(Directory + GetAspectRatio());
             if (allImages.Length == 0)
             {
                 texture = new Texture2D(1, 1, TextureFormat.RGBA32, false);

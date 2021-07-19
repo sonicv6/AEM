@@ -1,6 +1,7 @@
 ﻿using Anarchy.IO;
 using System;
 using System.Collections;
+using Anarchy.Configuration;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,10 +42,14 @@ namespace Anarchy.UI
             {
                 file.Load();
                 file.AutoSave = false;
-                string[] res = file.GetString("resolution").Split('x');
-                int width = Convert.ToInt32(res[0]);
-                int height = Convert.ToInt32(res[1]);
-                Screen.SetResolution(width, height, file.GetBool("fullscreen"));
+                Resolution res;
+                if (VideoSettings.ResolutionIndex >= Screen.resolutions.Length)
+                {
+                    VideoSettings.ResolutionIndex.Value = VideoSettings.ResolutionIndex.DefaultValue;
+                    VideoSettings.ResolutionIndex.Save();
+                }
+                res = Screen.resolutions[VideoSettings.ResolutionIndex];
+                Screen.SetResolution(res.width, res.height, VideoSettings.Fullscreen);
                 profile = file.GetString("profile");
                 QualitySettings.SetQualityLevel(file.GetInt("graphics"), true);
                 Localization.Language.SetLanguage(file.GetString("language"));

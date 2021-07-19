@@ -2878,6 +2878,10 @@ public partial class HERO : HeroBase
         Destroy(rightbladetrail2);
         spawned = true;
         GameModes.AntiReviveCheck(BasePV.owner.ID, this);
+        Setup.myCostume.stat.Acl = FengGameManagerMKII.FGM.MCACL;
+        Setup.myCostume.stat.Bla = FengGameManagerMKII.FGM.MCBLA;
+        Setup.myCostume.stat.Gas = FengGameManagerMKII.FGM.MCGAS;
+        Setup.myCostume.stat.Spd = FengGameManagerMKII.FGM.MCSPD;
     }
 
     private void Suicide()
