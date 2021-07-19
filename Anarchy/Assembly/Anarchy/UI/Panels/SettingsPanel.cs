@@ -541,23 +541,14 @@ namespace Anarchy.UI
             rect.Reset();
             pageSelection = SelectionGrid(rect, pageSelection, pagesSelection, pagesSelection.Length, true);
         }
-
-        private string[] GetResolutions()
-        {
-            string[] resolutions = new string[Screen.resolutions.Length];
-            for (int count = 0; count < resolutions.Length; count++)
-            {
-                resolutions[count] = $"{Screen.resolutions[count].width}x{Screen.resolutions[count].height}";
-            }
-
-            return resolutions;
-        }
         [GUIPage(Video)]
         private void DrawVideoPage()
         {
             //left
             left.Reset();
             LabelCenter(left, locale["graphics"], true);
+            DropdownMenuScrollable(left, VideoSettings.ResolutionIndex, VideoSettings.Resolutions, 4, true);
+            ToggleButton(left, VideoSettings.Fullscreen, "Fullscreen", true);
             TextField(left, VideoSettings.DrawDistance, locale["drawDistance"], Style.BigLabelOffset, true);
             ToggleButton(left, VideoSettings.Mipmap, locale["mipmap"], true);
             ToggleButton(left, VideoSettings.VSync, locale["vsync"], true);
@@ -589,7 +580,7 @@ namespace Anarchy.UI
             //left.MoveOffsetX(Style.LabelOffset);
             //SelectionGrid(left, VideoSettings.BlendWeight, locale.GetArray("blendWeights"), 3, true);
             //left.ResetX();
-            HorizontalSlider(left, VideoSettings.LODBias, locale.Format("lodBias", VideoSettings.LODBias.Value.ToString("F2")), 2f, 8f, Style.LabelOffsetSlider, true);
+            HorizontalSlider(left, VideoSettings.LODBias, locale.Format("lodBias", VideoSettings.LODBias.Value.ToString("F2")), 0.3f, 8f, Style.LabelOffsetSlider, true);
 
             //right
             right.Reset();

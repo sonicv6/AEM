@@ -559,6 +559,24 @@ namespace Anarchy.UI
             }
         }
 
+        public static void TextField(SmartRect position, ref int val, string label, float offset, bool move = false)
+        {
+            if (offset > 0f)
+            {
+                UGUI.Label(position.ToRect(), label, Style.Label);
+                position.MoveOffsetX(offset);
+            }
+
+            string text = val.ToString();
+            text = UGUI.TextField(position.ToRect(), text, Style.TextField);
+            int.TryParse(text, out val);
+            position.ResetX();
+            if (move)
+            {
+                position.MoveY();
+            }
+        }
+
         #endregion TextField
 
         #region Toggle

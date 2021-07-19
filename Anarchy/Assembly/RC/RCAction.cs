@@ -303,7 +303,7 @@ public class RCAction
                                 return;
                             }
 
-                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Sin((float) RCManager.floatVariables[str7] * (Math.PI / 180)), 9);
+                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Sin((float) RCManager.floatVariables[str7] * 0.01745f), 9);
                             return;
                         case 8:
                             if (!RCManager.floatVariables.ContainsKey(str7))
@@ -312,7 +312,7 @@ public class RCAction
                                 return;
                             }
 
-                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Cos((float) RCManager.floatVariables[str7] * (Math.PI / 180)), 9);
+                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Cos((float) RCManager.floatVariables[str7] * 0.01745f), 9);
                             return;
                         case 9:
                             if (!RCManager.floatVariables.ContainsKey(str7))
@@ -321,7 +321,7 @@ public class RCAction
                                 return;
                             }
 
-                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Tan((float) RCManager.floatVariables[str7] * (Math.PI / 180)), 9);
+                            RCManager.floatVariables[str7] = (float)Math.Round(Math.Tan((float) RCManager.floatVariables[str7] * 0.01745f), 9);
                             return;
                         case 10:
                             if (!RCManager.floatVariables.ContainsKey(str7))
@@ -330,7 +330,7 @@ public class RCAction
                                 return;
                             }
 
-                            RCManager.floatVariables[str7] = (float)Math.Round(180 / Math.PI * Math.Asin((float) RCManager.floatVariables[str7]), 9);
+                            RCManager.floatVariables[str7] = (float)Math.Round(57.296f * Math.Asin((float) RCManager.floatVariables[str7]), 9);
                             return;
                         case 11:
                             if (!RCManager.floatVariables.ContainsKey(str7))
@@ -339,7 +339,7 @@ public class RCAction
                                 return;
                             }
 
-                            RCManager.floatVariables[str7] = (float)Math.Round(180 / Math.PI * Math.Acos((float) RCManager.floatVariables[str7]), 9);
+                            RCManager.floatVariables[str7] = (float)Math.Round(57.296f * Math.Acos((float) RCManager.floatVariables[str7]), 9);
                             return;
                         case 12:
                             if (!RCManager.floatVariables.ContainsKey(str7))
@@ -348,7 +348,7 @@ public class RCAction
                                 return;
                             }
 
-                            RCManager.floatVariables[str7] = (float)Math.Round(180 / Math.PI* Math.Atan((float) RCManager.floatVariables[str7]), 9);
+                            RCManager.floatVariables[str7] = (float)Math.Round(57.296f * Math.Atan((float) RCManager.floatVariables[str7]), 9);
                             return;
 
                         case 13:
