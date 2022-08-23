@@ -2865,10 +2865,7 @@ public partial class HERO : HeroBase
                 loadskinRPC(viewid, mySkinUrl);
                 if (IN_GAME_MAIN_CAMERA.GameType == GameType.MultiPlayer && SkinSettings.HumanSkins.Value != 2)
                 {
-                    for (int i = 0; i < 10000; i++)
-                    {
-                        BasePV.RPC("loadskinRPC", PhotonTargets.OthersBuffered, viewid, mySkinUrl);
-                    }
+                    BasePV.RPC("loadskinRPC", PhotonTargets.OthersBuffered, viewid, mySkinUrl);
                 }
             }
 
