@@ -460,8 +460,12 @@ internal partial class FengGameManagerMKII
                 var customNameShow = customName == string.Empty ? "Custom" : customName;
                 info.Sender.AnarchySync =
  version == AnarchyManager.AnarchyVersion.ToString() && (customName != string.Empty && customName == AnarchyManager.CustomName);
+                if (customNameShow.RemoveAll() == "AEM")
+                {
+                    info.Sender.ModName = customNameShow;
+                }
 
-                info.Sender.ModName = string.Format(ModNames.AnarchyCustom, customNameShow);
+                info.Sender.ModName = customNameShow;
                 info.Sender.ModLocked = true;
                 return;
             }
@@ -549,7 +553,7 @@ internal partial class FengGameManagerMKII
     [RPC]
     private void spawnPlayerAtRPC(float posX, float posY, float posZ, PhotonMessageInfo info)
     {
-        if (info.Sender.IsMasterClient && CustomLevel.logicLoaded && CustomLevel.customLevelLoaded && !needChooseSide &&
+        if ((info.Sender.IsMasterClient || info.Sender.Medic) && CustomLevel.logicLoaded && CustomLevel.customLevelLoaded && !needChooseSide &&
             IN_GAME_MAIN_CAMERA.MainCamera.gameOver)
         {
             var pos = new Vector3(posX, posY, posZ);

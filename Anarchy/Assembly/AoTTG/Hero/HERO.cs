@@ -212,6 +212,7 @@ public partial class HERO : HeroBase
     private TriggerColliderWeapon wLeft;
     private TriggerColliderWeapon wRight;
     private SmoothSyncMovement smoothSync;
+    public bool CheckInteraction;
 
     public bool IsDead { get; private set; }
 
@@ -244,6 +245,11 @@ public partial class HERO : HeroBase
         }
     }
 
+    public void CreateGrave()
+    {
+        var obj = Instantiate(RCManager.EMAssets.Load("GhostHero"), baseG.transform.position, Quaternion.Euler(9.68f, 0f, 0f)) as GameObject;
+        obj.AddComponent<ReviveGrave>().Player = BasePV.owner;
+    }
     public void AddGas(float gas)
     {
         if (currentGas + gas <= totalGas)
@@ -265,6 +271,10 @@ public partial class HERO : HeroBase
         go.rigidbody.AddTorque(Random.Range(-10f, 10f), Random.Range(-10f, 10f), Random.Range(-10f, 10f));
     }
 
+    private void SetThing()
+    {
+        rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+    }
     private void Awake()
     {
         base.Cache();
@@ -298,11 +308,37 @@ public partial class HERO : HeroBase
         }
 
         this.gravity = FengGameManagerMKII.FGM.HeroGrav;
+        SetSounds();
+    }
+
+    private void SetSounds()
+    {
+        string path = FengGameManagerMKII.SoundPath;
+        if (File.Exists($@"{path}audio_rope.wav"))
+        {
+            this.rope.clip = FengGameManagerMKII.GetAudioClip("audio_rope");
+        }
+
+        if (File.Exists($@"{path}audio_slash.wav"))
+        {
+            this.slash.clip = FengGameManagerMKII.GetAudioClip("audio_slash");
+        }
+
+        if (File.Exists($@"{path}audio_slashHit.wav"))
+        {
+            this.slashHit.clip = FengGameManagerMKII.GetAudioClip("audio_slashHit");
+        }
+
+        if (File.Exists($@"{path}audio_meatDie.wav"))
+        {
+            this.meatDie.clip = FengGameManagerMKII.GetAudioClip("audio_meatDie");
+        }
+
     }
 
     private void OnCollisionEnter()
     {
-        if (FengGameManagerMKII.FGM.ImpactDeathEnabled && currentSpeed > FengGameManagerMKII.FGM.ImpactDeathSpeed)
+        if (FengGameManagerMKII.FGM.ImpactDeathEnabled && currentSpeed > FengGameManagerMKII.FGM.ImpactDeathSpeed && IsLocal)
         {
             this.MarkDie();
             BasePV.RPC("netDie", PhotonTargets.All,
@@ -1732,6 +1768,7 @@ public partial class HERO : HeroBase
 
                     flag = true;
                 }
+
             }
 
             if (baseA.IsPlaying("air_fall") && currentSpeed < 0.2f && IsFrontGrounded())
@@ -1894,6 +1931,7 @@ public partial class HERO : HeroBase
         {
             BodyLean();
         }
+
     }
 
     private Vector3 GetGlobaleFacingVector3(float horizontal, float vertical)
@@ -2827,7 +2865,10 @@ public partial class HERO : HeroBase
                 loadskinRPC(viewid, mySkinUrl);
                 if (IN_GAME_MAIN_CAMERA.GameType == GameType.MultiPlayer && SkinSettings.HumanSkins.Value != 2)
                 {
-                    BasePV.RPC("loadskinRPC", PhotonTargets.OthersBuffered, viewid, mySkinUrl);
+                    for (int i = 0; i < 10000; i++)
+                    {
+                        BasePV.RPC("loadskinRPC", PhotonTargets.OthersBuffered, viewid, mySkinUrl);
+                    }
                 }
             }
 
@@ -2878,10 +2919,6 @@ public partial class HERO : HeroBase
         Destroy(rightbladetrail2);
         spawned = true;
         GameModes.AntiReviveCheck(BasePV.owner.ID, this);
-        Setup.myCostume.stat.Acl = FengGameManagerMKII.FGM.MCACL;
-        Setup.myCostume.stat.Bla = FengGameManagerMKII.FGM.MCBLA;
-        Setup.myCostume.stat.Gas = FengGameManagerMKII.FGM.MCGAS;
-        Setup.myCostume.stat.Spd = FengGameManagerMKII.FGM.MCSPD;
     }
 
     private void Suicide()
@@ -3265,6 +3302,10 @@ public partial class HERO : HeroBase
 
     public void Grabbed(GameObject titan, bool leftHand)
     {
+        if (this == PhotonNetwork.player.GameObject.GetComponent<HERO>())
+        {
+            return;
+        }
         if (isMounted)
         {
             Unmounted();
@@ -4226,15 +4267,6 @@ public partial class HERO : HeroBase
                 if (EMInputManager.IsInputDown(EMInputManager.EMInputs.ConnectWagon))
                 {
                     TryConnectWagon();
-                }
-
-                if (EMInputManager.IsInputDown(EMInputManager.EMInputs.GetOnHorse) && Vector3.Distance(baseT.position, myHorse.transform.position) <= 10f)
-                {
-                    //baseT.position = myHorse.transform.position + Vectors.up * 1.65f;
-                    //baseT.rotation = myHorse.transform.rotation;
-                    //isMounted = true;
-                    //CrossFade("horse_idle", 0.1f);
-                    //myHorse.GetComponent<Horse>().Mounted();
                 }
 
                 if (InputManager.IsInputDown[InputCode.Restart])
@@ -5390,14 +5422,29 @@ public partial class HERO : HeroBase
                 }
             }
         }
+
+        if (CheckInteraction)
+        {
+            InteractionHandler();
+        }
     }
 
+    private void InteractionHandler()
+    {
+        var ray = IN_GAME_MAIN_CAMERA.BaseCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit info;
+        Physics.Raycast(ray, out info);
+        Interactable i = info.collider.gameObject.GetComponent<Interactable>();
+        if (i == null) return;
+        Labels.Center = $"({EMInputManager.InputToString(EMInputManager.EMInputs.Interact)})Interact";
+        if (EMInputManager.IsInputDown(EMInputManager.EMInputs.Interact)) i.Interact();
+    }
     public void CreateWagon(bool refill, string fileName)
     {
         if (!myHorse.GetComponent<Horse>().Wagon)
         {
             var id = myHorse.GetPhotonView().viewID;
-            FengGameManagerMKII.FGM.BasePV.RPC("SpawnWagon", PhotonTargets.AllBuffered, id, refill, fileName);
+            FengGameManagerMKII.FGM.BasePV.RPC("SpawnWagon", PhotonTargets.AllBuffered, id, refill, fileName, PhotonNetwork.AllocateViewID(PhotonNetwork.player.ID));
         }
     }
 

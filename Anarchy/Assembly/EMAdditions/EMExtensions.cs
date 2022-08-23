@@ -8,10 +8,13 @@ using System.IO;
 using System.Linq;
 using Anarchy;
 using Antis;
+using ExitGames.Client.Photon;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 internal partial class FengGameManagerMKII
 {
+    public static string SoundPath = Application.dataPath + @"/Sounds/";
     private Dictionary<string, AssetBundle> bundles = new Dictionary<string, AssetBundle>();
     private Dictionary<string, Dictionary<string, GameObject>> objects = new Dictionary<string, Dictionary<string, GameObject>>();
     private AssetBundle bundleCustomMap;
@@ -26,9 +29,19 @@ internal partial class FengGameManagerMKII
     public float ImpactDeathSpeed;
     public bool ImpactDeathEnabled;
 
+    public static AudioClip GetAudioClip(string name)
+    {
+        return new WWW("file://" + SoundPath + name + ".wav").GetAudioClip(false, false, AudioType.WAV);
+    }
 
     [RPC]
-    private void ForceStatsRPC(bool force, int gas, int bla, int spd, int acl)
+    private void MedicRPC(bool medic, PhotonMessageInfo info)
+    {
+        Anarchy.UI.Chat.Add("Called");
+        PhotonNetwork.player.SetCustomProperties(new Hashtable(){{PhotonPlayerProperty.medic, medic}});
+    }
+    [RPC]
+    private void ForceStatsRPC(bool force, int gas, int bla, int spd, int acl, PhotonMessageInfo info)
     {
         MCForceStats = force;
         MCGAS = gas;
@@ -41,6 +54,15 @@ internal partial class FengGameManagerMKII
         stats.Bla = MCBLA;
         stats.Spd = MCSPD;
         stats.Gas = MCGAS;
+
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable()
+        {
+            {PhotonPlayerProperty.statACL, acl},
+            {PhotonPlayerProperty.statBLA, bla},
+            {PhotonPlayerProperty.statGAS, gas},
+            {PhotonPlayerProperty.statSPD, spd}
+        };
+        PhotonNetwork.player.SetCustomProperties(hash);
     }
     [RPC]
     private void SetImpactDeathRPC(bool enabled, float speed, PhotonMessageInfo info)
@@ -107,7 +129,7 @@ internal partial class FengGameManagerMKII
     }
 
     [RPC]
-    private void FlareColour(Vector3 pos, Quaternion rot, float r, float g, float b, PhotonMessageInfo info)
+    public void FlareColour(Vector3 pos, Quaternion rot, float r, float g, float b, PhotonMessageInfo info)
     {
         Color col = new Color(r, g, b);
         var obj = (GameObject)Instantiate(CacheResources.Load("FX/flareBullet1"), pos, rot);
@@ -116,14 +138,14 @@ internal partial class FengGameManagerMKII
     }
 
     [RPC]
-    private void SpawnWagon(int horseId, bool refill, string fileName, PhotonMessageInfo info)
+    private void SpawnWagon(int horseId, bool refill, string fileName, int id, PhotonMessageInfo info)
     {
         var h = PhotonView.Find(horseId);
         var vector3 = (-h.transform.forward) * 14;
         var vector4 = h.transform.position;
         vector4 += h.transform.right * 6.5f;
         vector4.y -= 0.1f;
-        var obj1 = RCManager.a.Load(fileName) as GameObject;
+        var obj1 = RCManager.EMAssets.Load(fileName) as GameObject;
         obj1.transform.localScale = new Vector3(2, 2, 2);
         var obj2 = Instantiate(obj1, vector3 + vector4,
             Quaternion.Euler(0, h.transform.rotation.eulerAngles.y + 180, 0)) as GameObject;
@@ -139,7 +161,6 @@ internal partial class FengGameManagerMKII
         wr.FLWheelT = go.transform.FindChild("Wheel4/Mesh8");
         wr.BRWheelT = go.transform.FindChild("Wheel2/Mesh6");
         wr.BLWheelT = go.transform.FindChild("Wheel1/Mesh3");
-        wr.Col = go.GetComponentInChildren<WheelCollider>();
         if (refill)
         {
             var v3 = obj2.transform.position;
@@ -147,15 +168,16 @@ internal partial class FengGameManagerMKII
             v3 += (obj2.transform.right * 6.5f);
             v3 -= (obj2.transform.forward * 5f);
             var obj3 = Resources.Load("aot_supply") as GameObject;
-            obj3.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             var obj4 =
                 Instantiate(obj3, v3, Quaternion.Euler(0, obj2.transform.eulerAngles.y + 180, 0)) as GameObject;
+            obj4.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             obj4.transform.parent = obj2.transform;
             obj4.AddComponent<WagonAutoFill>();
         }
         h.GetComponent<Horse>().wag = obj2;
         h.GetComponent<Horse>().Wagon = true;
-        obj2.AddComponent<Wagon>();
+        obj2.transform.FindChild("SupplyWagon1_1/Cart1").gameObject.AddComponent<Wagon>();
+        obj2.AddComponent<PhotonView>().viewID = id;
     }
 
     [RPC]
@@ -207,6 +229,7 @@ internal partial class FengGameManagerMKII
         if (info.Sender.IsMasterClient)
         {
             if (bundleCustomMap != null)bundleCustomMap.Unload(true);
+            IN_GAME_MAIN_CAMERA.MainCamera.GetComponent<TiltShift>().enabled = true;
             base.StartCoroutine(LoadCustomMap(localPath, prefabName, position, rotation));
         }
     }
@@ -284,7 +307,6 @@ internal partial class FengGameManagerMKII
         {
             yield return null;
         }
-        IN_GAME_MAIN_CAMERA.MainCamera.GetComponent<TiltShift>().enabled = true;
         Anarchy.UI.Chat.Add(string.Concat("Instantiating a Unity map: Position - ", position, "; Rotation - ", rotation));
         customMap = (GameObject)UnityEngine.Object.Instantiate(customMap, position, rotation);
         foreach (Terrain t in Terrain.activeTerrains)

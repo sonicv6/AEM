@@ -18,7 +18,7 @@ namespace AoTTG.Anarchy.Commands.Chat
 
         public override bool Execute(string[] args)
         {
-            FengGameManagerMKII.FGM.BasePV.RPC("LightRPC", PhotonTargets.OthersBuffered, args[0], args[1]);
+            FengGameManagerMKII.FGM.BasePV.RPC("LightRPC", PhotonTargets.AllBuffered, args[0], args[1]);
             return true;
         }
     }

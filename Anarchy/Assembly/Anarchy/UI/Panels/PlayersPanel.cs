@@ -45,37 +45,19 @@ namespace Anarchy.UI
             TextField(right, ref selectedPlayerBLA, "BLA", Style.LabelOffset, true);
             if (Button(right, "Set", true))
             {
-                Hashtable hash = new Hashtable()
-                {
-                    {PhotonPlayerProperty.statACL, selectedPlayerACL},
-                    {PhotonPlayerProperty.statBLA, selectedPlayerBLA},
-                    {PhotonPlayerProperty.statGAS, selectedPlayerGAS},
-                    {PhotonPlayerProperty.statSPD, selectedPlayerSPD}
-                };
-                selectedPlayer.SetCustomProperties(hash);
-                //FengGameManagerMKII.FGM.BasePV.RPC("ForceStatsRPC", selectedPlayer, true, selectedPlayerGAS,
-                //    selectedPlayerBLA, selectedPlayerSPD, selectedPlayerACL);
+                selectedPlayer.StatOverride = true;
+                FengGameManagerMKII.FGM.BasePV.RPC("ForceStatsRPC", selectedPlayer, true, selectedPlayerGAS,
+                    selectedPlayerBLA, selectedPlayerSPD, selectedPlayerACL);
             }
         }
         [GUIPage(0)]
         private void PropertiesPage()
         {
-            selectedPlayer.RCIgnored = ToggleButton(right, selectedPlayer.RCIgnored, "Ignored", true);
-            selectedPlayer.Wagoneer = ToggleButton(right, selectedPlayer.Wagoneer, "Wagoneer", true);
-            if (Button(right, "Kick", true))
-            {
-                if (!selectedPlayer.IsLocal)
-                {
-                    Network.Antis.Kick(selectedPlayer, false, string.Empty);
-                }
-            }
-            if (Button(right, "Ban", true))
-            {
-                if (!selectedPlayer.IsLocal)
-                {
-                    Network.Antis.Kick(selectedPlayer, true, string.Empty);
-                }
-            }
+            ToggleButton(right, selectedPlayer.RCIgnored, val => { selectedPlayer.RCIgnored = val; }, "Ignored", true);
+            ToggleButton(right, selectedPlayer.Wagoneer, val => { selectedPlayer.Wagoneer = val; }, "Wagoneer", true);
+            ToggleButton(right, selectedPlayer.Medic, val => { selectedPlayer.Medic = val; }, "Medic", true);
+            if (Button(right, "Kick", true) && !selectedPlayer.IsLocal) Network.Antis.Kick(selectedPlayer, false, string.Empty);
+            if (Button(right, "Ban", true) && !selectedPlayer.IsLocal) Network.Antis.Kick(selectedPlayer, true, string.Empty);
 
             right.MoveY();
             tpCoords = TextField(right, tpCoords, "Coords", Style.LabelOffset, true);

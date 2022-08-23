@@ -80,7 +80,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\..\Game\AoTTG_Data\Managed\</OutputPath>
+    <OutputPath>D:\Documents\AottgAnarchy\AoTTG_Data\Managed\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
@@ -256,6 +256,11 @@
     <Compile Include="Aottg\Hero\HeroRPC.cs" />
     <Compile Include="Aottg\Titans\TitanRPC.cs" />
     <Compile Include="Anarchy\UI\Panels\CreditsPanel.cs" />
+    <Compile Include="EMAdditions\Interactable.cs" />
+    <Compile Include="EMAdditions\InventorySystem\Inventory.cs" />
+    <Compile Include="EMAdditions\InventorySystem\InventoryComponent.cs" />
+    <Compile Include="EMAdditions\InventorySystem\InventoryItem.cs" />
+    <Compile Include="EMAdditions\ReviveGrave.cs" />
     <Compile Include="EMAdditions\WagonAutoFill.cs" />
     <Compile Include="EMAdditions\Wagon.cs" />
     <Compile Include="EMAdditions\WheelRotate.cs" />
@@ -322,7 +327,6 @@
     <Compile Include="Anarchy\Localization\Language.cs" />
     <Compile Include="Anarchy\Localization\Locale.cs" />
     <Compile Include="Anarchy\Network\Antis.cs" />
-    <Compile Include="Anarchy\Network\Discord\DiscordManager.cs" />
     <Compile Include="Anarchy\Network\Discord\DiscordRPC.cs" />
     <Compile Include="Anarchy\Network\Events\Event101.cs" />
     <Compile Include="Anarchy\Network\Events\Event226.cs" />

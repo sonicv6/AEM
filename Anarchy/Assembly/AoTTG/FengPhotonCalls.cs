@@ -5,6 +5,7 @@ using Optimization.Caching;
 using RC;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // ReSharper disable once InconsistentNaming
@@ -556,6 +557,7 @@ internal partial class FengGameManagerMKII
         player.Dead = true;
         player.IsTitan = false;
         player.Wagoneer = false;
+        player.Medic = false;
         localRacingResult = string.Empty;
         needChooseSide = true;
         foreach (var info in killInfoList)
@@ -611,6 +613,12 @@ internal partial class FengGameManagerMKII
         RespawnPositions.Dispose();
         RCManager.racingSpawnPointSet = false;
         if (bundleCustomMap != null) bundleCustomMap.Unload(true);
+        foreach (KeyValuePair<string, AssetBundle> kp in bundles)
+        {
+            kp.Value.Unload(true);
+            bundles.Remove(kp.Key);
+            objects.Remove(kp.Key);
+        }
     }
 
     public void OnMasterClientSwitched(AOTEventArgs args)
@@ -680,7 +688,7 @@ internal partial class FengGameManagerMKII
     public void OnPhotonPlayerPropertiesChanged(AOTEventArgs args)
     {
         PlayerList?.Update();
-        if (args.Player.IsLocal)
+        if (args.Player.IsLocal || args.Player.StatOverride)
         {
             return;
         }

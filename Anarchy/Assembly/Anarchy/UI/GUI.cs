@@ -1,4 +1,5 @@
-﻿using Anarchy.Configuration;
+﻿using System;
+using Anarchy.Configuration;
 using Anarchy.UI.Elements;
 using System.Collections.Generic;
 using UnityEngine;
@@ -645,7 +646,7 @@ namespace Anarchy.UI
         public static bool ToggleButton(SmartRect position, bool val, string label, bool move = false)
         {
             UGUI.Label(position.ToRect(), label, Style.Label);
-            if (UGUI.Button(position.ToRect(), val ? LabelEnabled : LabelDisabled, Style.TextButton))
+            if (UGUI.Button(position, val ? LabelEnabled : LabelDisabled, Style.TextButton))
             {
                 val = !val;
             }
@@ -655,6 +656,18 @@ namespace Anarchy.UI
             }
 
             return val;
+        }
+        public static void ToggleButton(SmartRect position, bool val, Action<bool> setter, string label, bool move = false)
+        {
+            UGUI.Label(position.ToRect(), label, Style.Label);
+            if (UGUI.Button(position, val ? LabelEnabled : LabelDisabled, Style.TextButton))
+            {
+                setter(!val);
+            }
+            if (move)
+            {
+                position.MoveY();
+            }
         }
 
         public static void ToggleButton(SmartRect position, Setting<bool> val, string label, bool move = false)

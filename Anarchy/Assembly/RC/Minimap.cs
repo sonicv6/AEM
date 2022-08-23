@@ -41,7 +41,6 @@ public class Minimap : MonoBehaviour
     private CanvasScaler scaler;
     private static UnityEngine.Sprite supplySprite;
     private static UnityEngine.Sprite whiteIconSprite;
-
     private void AddBorderToTexture(ref Texture2D texture, Color borderColor, int borderPixelSize)
     {
         int num = texture.width * borderPixelSize;
@@ -430,9 +429,14 @@ public class Minimap : MonoBehaviour
         {
             return whiteIconSprite;
         }
-        else if (style == IconStyle.Supply)
+        if (style == IconStyle.Supply)
         {
             return supplySprite;
+        }
+
+        if (style == IconStyle.Revive)
+        {
+            return null;
         }
         return null;
     }
@@ -763,7 +767,8 @@ public class Minimap : MonoBehaviour
     public enum IconStyle
     {
         Circle,
-        Supply
+        Supply,
+        Revive
     }
 
     public class MinimapIcon
