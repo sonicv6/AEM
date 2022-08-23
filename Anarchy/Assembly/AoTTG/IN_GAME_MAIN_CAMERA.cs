@@ -458,6 +458,11 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
         }
         this.createSnapShotRT();
     }
+
+    public void SetThing()
+    {
+        mainObject.rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+    }
     public GameObject SetMainObject(object obj, bool resetRotation = true, bool lockAngle = false)
     {
         if (obj == null)

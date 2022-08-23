@@ -2,6 +2,8 @@
 using ExitGames.Client.Photon;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Anarchy;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -97,6 +99,7 @@ public class PhotonPlayer
                     vanillaUsersArray = vanillaUsersList.ToArray();
                 }
                 ModName = ModNames.Anarchy;
+                if (IsLocal) ModName = AnarchyManager.CustomName;
             }
             else if (anarchySync && !value && !IsLocal)
             {
@@ -151,6 +154,7 @@ public class PhotonPlayer
         }
     }
 
+    public bool StatOverride;
 
     private bool rcIgnored = false;
 
@@ -220,7 +224,6 @@ public class PhotonPlayer
         {
             AnarchySync = true;
             HasVoice = true;
-                ModName = "[00FF00]AEM[-]";
         }
         targetArray = new int[] { ID };
         option = new RaiseEventOptions() { TargetActors = targetArray };
@@ -537,6 +540,14 @@ public class PhotonPlayer
         set
         {
             SetCustomProperties(new Hashtable() { { PhotonPlayerProperty.wagoneer, value ? 2 : 1 } });
+        }
+    }
+    public bool Medic
+    {
+        get => Properties != null && Properties[PhotonPlayerProperty.medic] is int med && med == 2;
+        set
+        {
+            SetCustomProperties(new Hashtable() { { PhotonPlayerProperty.medic, value ? 2 : 1 } });
         }
     }
 

@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.IO;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -424,8 +425,17 @@ public partial class TITAN : TitanBase
             }
             //UnityEngine.Debug.Log(state.name);
         }
+        SetSounds();
     }
+    private void SetSounds()
+    {
+        string path = FengGameManagerMKII.SoundPath;
+        if (File.Exists($@"{path}audio_titanStep.wav"))
+        {
+            this.FootAudio.clip = FengGameManagerMKII.GetAudioClip("audio_titanStep");
+        }
 
+    }
     public void UpdateHeroDistance()
     {
         if ((!IN_GAME_MAIN_CAMERA.isPausing || IN_GAME_MAIN_CAMERA.GameType == GameType.MultiPlayer) && myDifficulty >= 0 && !nonAI)
@@ -3099,7 +3109,7 @@ public partial class TITAN : TitanBase
                             var position = myHeroT.position;
                             switch (abnormalType)
                             {
-                                case AbnormalType.Jumper when ((this.myDistance > this.attackDistance) || (this.myHero.transform.position.y > (this.Head.position.y + (4f * this.myLevel)))) && ((Mathf.Abs(this.between2) < 120f) && (Vector3.Distance(this.baseT.position, this.myHero.transform.position) < (1.5f * (this.myHero.transform.position.y - this.baseT.position.y + myLevel)))):
+                                case AbnormalType.Jumper when ((this.myDistance > this.attackDistance) || (this.myHero.transform.position.y > (this.Head.position.y + (4f * this.myLevel)))) && ((Mathf.Abs(this.between2) < 120f) && (Vector3.Distance(this.baseT.position, this.myHero.transform.position) < ((this.myHero.transform.position.y - this.baseT.position.y + myLevel)))):
                                     Attack("jumper_0");
                                     return;
 
@@ -3773,7 +3783,7 @@ public partial class TITAN : TitanBase
                     {
                         if (((this.abnormalType == AbnormalType.Jumper) && (((this.myDistance > this.attackDistance) && (this.myHero.transform.position.y > (this.Head.position.y + (4f * this.myLevel)))) 
                             || (this.myHero.transform.position.y > (this.Head.position.y + (4f * this.myLevel)))))
-                            && (Vector3.Distance(this.baseT.position, this.myHero.transform.position) < (1.5f * (this.myHero.transform.position.y - this.baseT.position.y + myLevel))))
+                            && (Vector3.Distance(this.baseT.position, this.myHero.transform.position) < ((this.myHero.transform.position.y - this.baseT.position.y + myLevel))))
                         {
                             Attack("jumper_0");
                             return;

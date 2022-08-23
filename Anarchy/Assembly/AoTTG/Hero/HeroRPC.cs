@@ -117,6 +117,8 @@ public partial class HERO
     [RPC]
     private void netDie2(int viewID = -1, string titanName = "", PhotonMessageInfo info = null)
     {
+        if (PhotonNetwork.player.Medic) CreateGrave();
+
         if (BasePV.IsMine)
         {
             if (myBomb != null)
@@ -474,9 +476,9 @@ public partial class HERO
     }
 
     [RPC]
-    public void netDie(Vector3 v, bool isBite, int viewID = -1, string titanName = "", bool killByTitan = true,
-        PhotonMessageInfo info = null)
+    public void netDie(Vector3 v, bool isBite, int viewID = -1, string titanName = "", bool killByTitan = true, PhotonMessageInfo info = null)
     {
+        if (PhotonNetwork.player.Medic) CreateGrave();
         if (PhotonNetwork.IsMasterClient)
         {
             OnDeathEvent(viewID, killByTitan);

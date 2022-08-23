@@ -4,10 +4,13 @@ public class Wagon : MonoBehaviour
 {
     private float timeInTrigger;
 
+    private void Start()
+    {
+    }
     private void OnTriggerStay(Collider other)
     {
         var h = other.GetComponentInParent<Horse>();
-        if (h.BasePV.IsMine && h.wag == gameObject && !h.Wagon)
+        if (h.BasePV.IsMine && h.wag == transform.root.gameObject && !h.Wagon)
         {
             timeInTrigger += Time.fixedDeltaTime;
             if (timeInTrigger >= 2f)

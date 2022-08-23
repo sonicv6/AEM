@@ -80,7 +80,6 @@ namespace Anarchy.UI
             UIManager.UpdateGUIScaling();
             Optimization.Labels.Font = Style.Font;
             yield return new WaitForSeconds(0.5f);
-
             Info.text = "Enjoy!";
             Optimization.Labels.VERSION = string.Format(UIMainReferences.VersionShow, AnarchyManager.AnarchyVersion.ToString());
             textUpdate = false;

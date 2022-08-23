@@ -35,6 +35,7 @@ public class Horse : Photon.MonoBehaviour
         baseR = GetComponent<Rigidbody>();
         baseT = GetComponent<Transform>();
         dustParticle = dust.GetComponent<ParticleSystem>();
+        myHero = BasePV.owner.GameObject;
     }
 
     private void CrossFade(string aniName, float time)

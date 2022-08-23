@@ -17,7 +17,7 @@ public static class EMInputManager
         DropWagon,
         ConnectWagon,
         HorseFollow,
-        GetOnHorse,
+        Interact,
         Count
     }
 
@@ -30,7 +30,7 @@ public static class EMInputManager
         KeyCode.Keypad5,
         KeyCode.Keypad6,
         KeyCode.Keypad7,
-        KeyCode.Keypad8
+        KeyCode.F
     };
 
     public static KeySetting[] Keys = new KeySetting[(int)EMInputs.Count];
@@ -46,5 +46,10 @@ public static class EMInputManager
     public static bool IsInputDown(EMInputs input)
     {
         return Keys[(int)input].IsKeyDown();
+    }
+
+    public static string InputToString(EMInputs input)
+    {
+        return Keys[(int) input].Value.ToString();
     }
 }

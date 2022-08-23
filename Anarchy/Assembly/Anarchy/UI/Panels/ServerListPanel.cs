@@ -329,6 +329,7 @@ namespace Anarchy.UI
             pwdRect.Reset();
             LabelCenter(pwdRect, locale["pwdRequest"], true);
             pwdInput = TextField(pwdRect, pwdInput, string.Empty, 0f, true);
+            pwdInput = roomToJoin.GetPass();
             if (Button(pwdRect, locale["joinRoom"], true))
             {
                 if (roomToJoin == null || !roomToJoin.IsCorrectPassword(pwdInput))
@@ -687,7 +688,7 @@ namespace Anarchy.UI
             {
                 if (NetworkSettings.IsCustomPhotonServer)
                 {
-                    result = PhotonNetwork.ConnectToMaster(NetworkSettings.IPAdress.Value, NetworkSettings.Port.Value, string.Empty, UIMainReferences.ConnectField);
+                    result = PhotonNetwork.ConnectToMaster(NetworkSettings.IPAdress.Value, NetworkSettings.Port.Value, string.Empty, string.Empty);
                 }
                 else
                 {

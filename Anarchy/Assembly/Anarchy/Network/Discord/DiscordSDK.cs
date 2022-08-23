@@ -6,11 +6,11 @@ namespace Anarchy.Network.Discord
 {
     internal class DiscordSDK : MonoBehaviour
     {
-        public const long DiscordClientID = 571227991145971732;
+        //public const long DiscordClientID = 571227991145971732;
+        public const long DiscordClientID = 866788681083781120;
         public static readonly long StartTime = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
 
         private SDK.Discord _Discord;
-
         private SDK.Activity _Activity;
         private SDK.ActivityManager _ActivityManager;
 
@@ -102,14 +102,14 @@ namespace Anarchy.Network.Discord
                     _Activity.State = "In lobby: " + Regex.Replace(PhotonNetwork.ServerAddress, "app\\-|\\.exitgamescloud\\.com|\\:\\d+", "").ToUpper().Replace("WS://", "").Replace("WSS://", "");
                     _Activity.Party.Size.CurrentSize = 0;
                     _Activity.Party.Size.MaxSize = 0;
-                    _Activity.Assets.LargeImage = "anarchyicon";
+                    _Activity.Assets.LargeImage = "aemlogo";
                 }
                 else if (IN_GAME_MAIN_CAMERA.GameType != GameType.Stop)
                 {
                     _Activity.State = "Solo: " + FengGameManagerMKII.Level.Name;
                     _Activity.Party.Size.CurrentSize = 0;
                     _Activity.Party.Size.MaxSize = 0;
-                    _Activity.Assets.LargeImage = FengGameManagerMKII.Level.DiscordName;
+                    _Activity.Assets.LargeImage = "aemlogo";
                     _Activity.Assets.LargeText = FengGameManagerMKII.Level.Name;
                 }
                 else
@@ -117,7 +117,7 @@ namespace Anarchy.Network.Discord
                     _Activity.State = "In menu";
                     _Activity.Party.Size.CurrentSize = 0;
                     _Activity.Party.Size.MaxSize = 0;
-                    _Activity.Assets.LargeImage = "anarchyicon";
+                    _Activity.Assets.LargeImage = "aemlogo";
                 }
             }
             else
@@ -126,7 +126,7 @@ namespace Anarchy.Network.Discord
                 _Activity.State = "Multiplayer: " + ((text.Length > 30) ? (text.Remove(27) + "...") : text);
                 _Activity.Party.Size.CurrentSize = PhotonNetwork.room.PlayerCount;
                 _Activity.Party.Size.MaxSize = PhotonNetwork.room.MaxPlayers;
-                _Activity.Assets.LargeImage = FengGameManagerMKII.Level.DiscordName;
+                _Activity.Assets.LargeImage = "aemlogo";
                 _Activity.Assets.LargeText = FengGameManagerMKII.Level.Name;
             }
 

@@ -173,6 +173,12 @@ public class RoomInfo
         return decrypted.Equals(pass);
     }
 
+    public string GetPass()
+    {
+        string[] array = Name.Split('`');
+        string decrypted = new SimpleAES().Decrypt(array[5]);
+        return decrypted;
+    }
     public override string ToString()
     {
         object[] args = new object[] { this.nameField, !this.visibleField ? "hidden" : "visible", !this.openField ? "closed" : "open", this.maxPlayersField, this.PlayerCount };

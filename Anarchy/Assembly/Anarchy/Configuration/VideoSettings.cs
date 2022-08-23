@@ -34,7 +34,6 @@ namespace Anarchy.Configuration
         public static IntSetting ResolutionIndex = new IntSetting("ResolutionIndex", Screen.resolutions.Length - 1);
 
         public static FloatSetting LODBias = new FloatSetting("LODBias", 2f);
-        public static FloatSetting MaxLODLevel = new FloatSetting("MaxLODLevel", 0f);
         public static FloatSetting DrawDistance = new FloatSetting("DrawDistance", 1000f);
         public static FloatSetting ShadowDistance = new FloatSetting("ShadowDistance", 100f);
         public static FloatSetting Quality = new FloatSetting("Quality", 0f);
